@@ -1,8 +1,10 @@
 import requests
+import streamlit as st
 
 # ✅ Option A: Paste your Anthropic API key here
 # Get it free at: https://console.anthropic.com
-ANTHROPIC_API_KEY = ""
+ANTHROPIC_API_KEY = st.secrets.get("ANTHROPIC_API_KEY", "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")
+
 
 def get_ai_summary(title, body, date, category):
     """Generate a 3-sentence manager-level summary using Claude API"""
