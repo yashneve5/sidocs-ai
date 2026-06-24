@@ -1,4 +1,5 @@
 import requests
+import streamlit as st
 from bs4 import BeautifulSoup
 import re, time, warnings
 warnings.filterwarnings("ignore")
@@ -13,7 +14,7 @@ HEADERS = {
 }
 
 # ✅ Paste your ScraperAPI key here
-SCRAPERAPI_KEY = ""
+SCRAPERAPI_KEY = st.secrets.get("SCRAPERAPI_KEY", "13f8d4ab092ded8492675818e44ba486")
 
 def get_proxies():
     return {
