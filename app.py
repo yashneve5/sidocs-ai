@@ -837,20 +837,71 @@ with tab1:
 
         st.markdown('<div class="sec-label">Article List</div>', unsafe_allow_html=True)
 
-        # Download All PDFs button
+        # Download All PDFs merged into one
         all_pdfs = [a for a in a2 if a.get("pdf_url")]
         if all_pdfs:
-            pdf_links_csv = "\n".join([f"{a.get('title','')[:60]},{a.get('pdf_url','')}" for a in all_pdfs])
-            col_dl1, col_dl2 = st.columns([2,1], gap="medium")
+            st.markdown(f'<div style="padding:14px 20px;background:rgba(0,255,191,0.06);border:1px solid rgba(0,255,191,0.2);border-left:4px solid #00ffbf;font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:12px;"><b style="color:#00ffbf;">{len(all_pdfs)} PDFs found</b> — Download individual PDFs from the table below, or merge all into one combined PDF.</div>', unsafe_allow_html=True)
+
+            col_dl1, col_dl2 = st.columns([1,1], gap="medium")
             with col_dl1:
-                st.markdown(f'<div style="padding:14px 20px;background:rgba(0,255,191,0.06);border:1px solid rgba(0,255,191,0.2);border-left:4px solid #00ffbf;font-size:13px;color:rgba(255,255,255,0.7);"><b style="color:#00ffbf;">{len(all_pdfs)} PDFs found</b> — Download individual PDFs from the table below, or export all links at once.</div>', unsafe_allow_html=True)
-            with col_dl2:
                 st.download_button(
                     "⬇  Export All PDF Links (CSV)",
-                    data=("Title,PDF URL\n" + pdf_links_csv).encode(),
+                    data=("Title,PDF URL\n" + "\n".join([f"\"{a.get('title','')[:60]}\",{a.get('pdf_url','')}" for a in all_pdfs])).encode(),
                     file_name=f"siemens_pdf_links_{datetime.now().strftime('%Y%m%d')}.csv",
                     mime="text/csv"
                 )
+            with col_dl2:
+                merge_btn = st.button("📎  Merge All PDFs into One File", key="merge_pdfs_btn")
+
+            if merge_btn:
+                import requests as _req2
+                try:
+                    from PyPDF2 import PdfMerger
+                except ImportError:
+                    try:
+                        from pypdf import PdfMerger
+                    except ImportError:
+                        PdfMerger = None
+
+                if PdfMerger is None:
+                    st.error("PyPDF2 / pypdf not installed. Run: pip install PyPDF2")
+                else:
+                    merger = PdfMerger()
+                    _HDRS = {"User-Agent": "Mozilla/5.0"}
+                    failed = []
+                    merge_prog = st.progress(0)
+                    merge_status = st.empty()
+                    for idx, a in enumerate(all_pdfs):
+                        purl = a.get("pdf_url","")
+                        title_short = a.get("title","")[:50]
+                        merge_status.markdown(f'<div style="font-size:12px;color:#00ffbf;">⬇ Downloading [{idx+1}/{len(all_pdfs)}]: {title_short}...</div>', unsafe_allow_html=True)
+                        try:
+                            r2 = _req2.get(purl, headers=_HDRS, verify=False, timeout=30)
+                            if r2.status_code == 200 and b"%PDF" in r2.content[:10]:
+                                merger.append(io.BytesIO(r2.content))
+                            else:
+                                failed.append(title_short)
+                        except Exception as ex:
+                            failed.append(title_short)
+                        merge_prog.progress(int((idx+1)/len(all_pdfs)*100))
+
+                    merged_buf = io.BytesIO()
+                    merger.write(merged_buf)
+                    merger.close()
+                    merged_buf.seek(0)
+                    merged_bytes = merged_buf.read()
+                    merge_prog.empty()
+                    merge_status.empty()
+
+                    ok_count = len(all_pdfs) - len(failed)
+                    st.markdown(f'<div style="padding:12px 18px;background:rgba(0,255,191,0.07);border:1px solid rgba(0,255,191,0.25);border-left:4px solid #00ffbf;font-size:13px;color:#ffffff;margin-bottom:8px;">✅ <b style="color:#00ffbf;">{ok_count} PDFs merged</b> successfully{f" · {len(failed)} failed" if failed else ""}. Click below to download.</div>', unsafe_allow_html=True)
+                    st.download_button(
+                        label=f"⬇  Download Combined PDF ({ok_count} articles, {len(merged_bytes)//1024} KB)",
+                        data=merged_bytes,
+                        file_name=f"siemens_press_all_{datetime.now().strftime('%Y%m%d')}.pdf",
+                        mime="application/pdf",
+                        key="download_merged_pdf"
+                    )
 
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown(f'<div class="card-header"><span class="card-title">Scraped Articles</span><span class="badge-green">{len(a2)} Results</span></div>', unsafe_allow_html=True)
