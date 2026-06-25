@@ -151,38 +151,37 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 .content { background: #000028; padding: 28px 60px 60px 60px; }
 
 /* ══════════════════════════════════════════
-   TABS — seamless blend with site background
+   TABS — green active bg, white text
 ══════════════════════════════════════════ */
 .stTabs [data-baseweb="tab-list"] {
     background: #000028 !important;
     border-bottom: 1px solid rgba(255,255,255,0.08) !important;
-    border-top: none !important;
     gap: 0 !important; padding: 0 60px !important;
     margin: 0 !important;
     box-shadow: none !important;
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent !important;
-    color: rgba(255,255,255,0.4) !important;
-    font-weight: 700 !important; font-size: 12px !important;
-    padding: 18px 40px !important;
+    color: rgba(255,255,255,0.45) !important;
+    font-weight: 600 !important; font-size: 12px !important;
+    padding: 14px 32px !important;
     border: none !important;
     border-bottom: 3px solid transparent !important;
     margin-bottom: -1px !important;
-    letter-spacing: 1.5px !important;
+    letter-spacing: 1.2px !important;
     text-transform: uppercase !important;
     transition: all 0.2s !important;
 }
 .stTabs [data-baseweb="tab"]:hover {
-    color: rgba(255,255,255,0.8) !important;
-    background: transparent !important;
+    color: rgba(255,255,255,0.85) !important;
+    background: rgba(255,255,255,0.04) !important;
 }
 .stTabs [aria-selected="true"] {
-    color: #00ffbf !important;
+    color: #ffffff !important;
     font-weight: 800 !important;
+    background: #009999 !important;
     border-bottom: 3px solid #00ffbf !important;
-    background: transparent !important;
-    letter-spacing: 1.5px !important;
+    letter-spacing: 1.2px !important;
     text-shadow: none !important;
 }
 .stTabs [data-baseweb="tab-panel"] {
@@ -1285,4 +1284,3 @@ tr:hover td {{ background:rgba(0,255,191,0.04); }}
             st.markdown('<div style="padding:60px;text-align:center;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);"><div style="font-size:14px;color:rgba(255,255,255,0.28);">No articles match the current filters.<br>Try adjusting the date range, category or search term.</div></div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
-            
