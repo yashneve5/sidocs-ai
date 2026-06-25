@@ -447,10 +447,32 @@ label,
 /* Kill the white calendar popup */
 [data-baseweb="popover"] { background: #000a38 !important; }
 [data-baseweb="calendar"] { background: #000a38 !important; border: 1px solid rgba(0,255,191,0.18) !important; }
-[data-baseweb="calendar"] * { color: #ffffff !important; }
+[data-baseweb="calendar"] * { color: #ffffff !important; background: transparent !important; }
 [data-baseweb="calendar"] button { background: transparent !important; color: #ffffff !important; border: none !important; }
 [data-baseweb="calendar"] [aria-selected="true"] { background: #00ffbf !important; color: #000028 !important; }
+[data-baseweb="calendar"] [aria-selected="true"] * { color: #000028 !important; }
 [data-baseweb="calendar"] [data-testid="day"]:hover { background: rgba(0,255,191,0.15) !important; }
+[data-baseweb="calendar"] [data-testid="day"] { color: #ffffff !important; }
+[data-baseweb="calendar"] abbr { color: rgba(255,255,255,0.45) !important; text-decoration: none !important; }
+[data-baseweb="calendar"] select,
+[data-baseweb="calendar"] option { background: #000a38 !important; color: #ffffff !important; }
+/* Month/Year header buttons */
+[data-baseweb="calendar"] [aria-label*="month"],
+[data-baseweb="calendar"] [aria-label*="year"],
+[data-baseweb="calendar"] [aria-label*="previous"],
+[data-baseweb="calendar"] [aria-label*="next"] { color: #ffffff !important; background: transparent !important; }
+/* Day-of-week header row */
+[data-baseweb="calendar"] [role="columnheader"] { color: rgba(255,255,255,0.4) !important; }
+/* Today highlight */
+[data-baseweb="calendar"] [aria-label*="today"] { border: 1px solid rgba(0,255,191,0.5) !important; }
+/* Date input text box itself */
+[data-testid="stDateInput"] input,
+div[data-baseweb="input"] input[type="text"] {
+    background: rgba(255,255,255,0.07) !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    border-color: rgba(255,255,255,0.16) !important;
+}
 
 /* Number input */
 .stNumberInput input {
@@ -1189,9 +1211,78 @@ tr:hover td {{ background:rgba(0,255,191,0.04); }}
             components.html(table_html, height=min(90 + len(filtered) * 62, 700), scrolling=True)
 
             st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
-            st.download_button("⬇  Export Filtered Articles (CSV)",
-                data=pd.DataFrame(filtered).to_csv(index=False).encode(),
-                file_name=f"filtered_{f_s}_{f_e}.csv", mime="text/csv")
+
+            # ── Bottom action bar ─────────────────────────────────
+            filtered_pdfs = [a for a in filtered if a.get("pdf_url")]
+            st.markdown(f"""
+            <div style="padding:16px 20px;background:rgba(0,255,191,0.05);border:1px solid rgba(0,255,191,0.18);
+                        border-left:4px solid #00ffbf;margin-bottom:12px;font-size:13px;color:rgba(255,255,255,0.7);">
+                <b style="color:#00ffbf;">{len(filtered_pdfs)} of {len(filtered)} filtered articles have PDFs</b>
+                &nbsp;·&nbsp; Date range: <b style="color:#ffffff;">{f_mn3} → {f_mx3}</b>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_ex1, col_ex2 = st.columns([1,1], gap="medium")
+            with col_ex1:
+                st.download_button("⬇  Export Filtered Articles (CSV)",
+                    data=pd.DataFrame(filtered).to_csv(index=False).encode(),
+                    file_name=f"filtered_{f_s}_{f_e}.csv", mime="text/csv",
+                    key="export_filtered_csv")
+            with col_ex2:
+                merge_btn3 = st.button(
+                    f"📎  Merge {len(filtered_pdfs)} PDFs into One File ({f_mn3} → {f_mx3})",
+                    key="merge_filtered_pdfs",
+                    disabled=(len(filtered_pdfs) == 0)
+                )
+
+            if merge_btn3 and filtered_pdfs:
+                import requests as _req3
+                try:
+                    from PyPDF2 import PdfMerger as _PM3
+                except ImportError:
+                    try:
+                        from pypdf import PdfMerger as _PM3
+                    except ImportError:
+                        _PM3 = None
+
+                if _PM3 is None:
+                    st.error("PyPDF2 not installed. Run: pip install PyPDF2")
+                else:
+                    merger3   = _PM3()
+                    _HDRS3    = {"User-Agent": "Mozilla/5.0"}
+                    failed3   = []
+                    p3        = st.progress(0)
+                    status3   = st.empty()
+                    for idx, a in enumerate(filtered_pdfs):
+                        purl = a.get("pdf_url","")
+                        t    = a.get("title","")[:50]
+                        status3.markdown(f'<div style="font-size:12px;color:#00ffbf;">⬇ [{idx+1}/{len(filtered_pdfs)}] {t}...</div>', unsafe_allow_html=True)
+                        try:
+                            r3 = _req3.get(purl, headers=_HDRS3, verify=False, timeout=30)
+                            if r3.status_code == 200 and b"%PDF" in r3.content[:10]:
+                                merger3.append(io.BytesIO(r3.content))
+                            else:
+                                failed3.append(t)
+                        except Exception:
+                            failed3.append(t)
+                        p3.progress(int((idx+1)/len(filtered_pdfs)*100))
+
+                    buf3 = io.BytesIO()
+                    merger3.write(buf3)
+                    merger3.close()
+                    buf3.seek(0)
+                    merged3 = buf3.read()
+                    p3.empty(); status3.empty()
+
+                    ok3 = len(filtered_pdfs) - len(failed3)
+                    st.markdown(f'<div style="padding:12px 18px;background:rgba(0,255,191,0.07);border:1px solid rgba(0,255,191,0.25);border-left:4px solid #00ffbf;font-size:13px;color:#ffffff;margin-bottom:8px;">✅ <b style="color:#00ffbf;">{ok3} PDFs merged</b>{f" · {len(failed3)} failed" if failed3 else ""}. Click below to download.</div>', unsafe_allow_html=True)
+                    st.download_button(
+                        label=f"⬇  Download Combined PDF — {f_s} to {f_e} ({ok3} articles, {len(merged3)//1024} KB)",
+                        data=merged3,
+                        file_name=f"siemens_{f_s}_{f_e}_merged.pdf",
+                        mime="application/pdf",
+                        key="dl_merged_filtered"
+                    )
         else:
             st.markdown('<div style="padding:60px;text-align:center;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);"><div style="font-size:14px;color:rgba(255,255,255,0.28);">No articles match the current filters.<br>Try adjusting the date range, category or search term.</div></div>', unsafe_allow_html=True)
 
