@@ -154,33 +154,36 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
    TABS — bold, prominent, attractive
 ══════════════════════════════════════════ */
 .stTabs [data-baseweb="tab-list"] {
-    background: #00001e !important;
-    border-bottom: 2px solid rgba(255,255,255,0.07) !important;
+    background: linear-gradient(90deg, #001a1a 0%, #002020 50%, #001a1a 100%) !important;
+    border-bottom: 2px solid rgba(0,255,191,0.25) !important;
+    border-top: 1px solid rgba(0,255,191,0.1) !important;
     gap: 0 !important; padding: 0 60px !important;
     margin: 0 !important;
+    box-shadow: 0 2px 24px rgba(0,255,191,0.07) !important;
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent !important;
-    color: rgba(255,255,255,0.38) !important;
-    font-weight: 700 !important; font-size: 13px !important;
-    padding: 18px 36px !important;
+    color: rgba(0,255,191,0.35) !important;
+    font-weight: 700 !important; font-size: 12px !important;
+    padding: 18px 40px !important;
     border: none !important;
     border-bottom: 3px solid transparent !important;
     margin-bottom: -2px !important;
-    letter-spacing: 0.8px !important;
+    letter-spacing: 1.5px !important;
     text-transform: uppercase !important;
     transition: all 0.2s !important;
 }
 .stTabs [data-baseweb="tab"]:hover {
-    color: rgba(255,255,255,0.75) !important;
-    background: rgba(255,255,255,0.03) !important;
+    color: rgba(0,255,191,0.75) !important;
+    background: rgba(0,255,191,0.05) !important;
 }
 .stTabs [aria-selected="true"] {
     color: #00ffbf !important;
     font-weight: 800 !important;
     border-bottom: 3px solid #00ffbf !important;
-    background: rgba(0,255,191,0.04) !important;
-    letter-spacing: 0.8px !important;
+    background: rgba(0,255,191,0.08) !important;
+    letter-spacing: 1.5px !important;
+    text-shadow: 0 0 20px rgba(0,255,191,0.5) !important;
 }
 .stTabs [data-baseweb="tab-panel"] {
     background: transparent !important; padding: 0 !important;
