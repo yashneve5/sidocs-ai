@@ -151,37 +151,42 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 .content { background: #000028; padding: 28px 60px 60px 60px; }
 
 /* ══════════════════════════════════════════
-   TABS — green active bg, white text
+   TABS — Siemens CTA button style
 ══════════════════════════════════════════ */
 .stTabs [data-baseweb="tab-list"] {
     background: #000028 !important;
-    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
-    gap: 0 !important; padding: 0 60px !important;
+    border-bottom: none !important;
+    gap: 16px !important;
+    padding: 20px 60px !important;
     margin: 0 !important;
     box-shadow: none !important;
+    align-items: center !important;
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent !important;
-    color: rgba(255,255,255,0.45) !important;
-    font-weight: 600 !important; font-size: 12px !important;
+    color: #00ffbf !important;
+    font-weight: 700 !important; font-size: 13px !important;
     padding: 14px 32px !important;
-    border: none !important;
-    border-bottom: 3px solid transparent !important;
-    margin-bottom: -1px !important;
-    letter-spacing: 1.2px !important;
-    text-transform: uppercase !important;
-    transition: all 0.2s !important;
+    border: 2px solid #00ffbf !important;
+    border-bottom: 2px solid #00ffbf !important;
+    margin-bottom: 0 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: none !important;
+    transition: all 0.18s !important;
+    border-radius: 0 !important;
 }
 .stTabs [data-baseweb="tab"]:hover {
-    color: rgba(255,255,255,0.85) !important;
-    background: rgba(255,255,255,0.04) !important;
+    background: rgba(0,255,191,0.1) !important;
+    color: #ffffff !important;
+    border-color: #00ffbf !important;
 }
 .stTabs [aria-selected="true"] {
-    color: #ffffff !important;
+    color: #000028 !important;
     font-weight: 800 !important;
-    background: #009999 !important;
-    border-bottom: 3px solid #00ffbf !important;
-    letter-spacing: 1.2px !important;
+    background: #00ffbf !important;
+    border: 2px solid #00ffbf !important;
+    border-bottom: 2px solid #00ffbf !important;
+    letter-spacing: 0.5px !important;
     text-shadow: none !important;
 }
 .stTabs [data-baseweb="tab-panel"] {
@@ -641,11 +646,11 @@ st.markdown(f"""
 # ══════════════════════════════════════════
 # TABS
 # ══════════════════════════════════════════
-st.markdown('<div style="background:#000028; padding: 0 60px; border-bottom:1px solid rgba(255,255,255,0.06);">', unsafe_allow_html=True)
+st.markdown('<div style="background:#000028; padding: 0;">', unsafe_allow_html=True)
 tab1, tab2, tab3 = st.tabs([
     "  🌐  Live Scraper  ",
     "  📄  PDF Upload & Date Check  ",
-    "  📊  Article Explorer  ",
+    "  🗂  Article Browser  ",
 ])
 st.markdown('</div>', unsafe_allow_html=True)
 
