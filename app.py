@@ -91,100 +91,96 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 .subnav-item.active { color: #ffffff; border-bottom-color: #00ffbf; font-weight: 600; }
 
 /* ══════════════════════════════════════════
-   HERO — full-width Siemens.com hero section
+   HERO — compact version, no wasted space
 ══════════════════════════════════════════ */
 .hero {
-    background: #000028;
-    padding: 80px 60px 70px 60px;
+    background: linear-gradient(135deg, #000028 60%, #000a38 100%);
+    padding: 36px 60px 28px 60px;
     position: relative; overflow: hidden;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    min-height: 380px;
-    display: flex; flex-direction: column; justify-content: center;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 .hero::before {
     content: '';
-    position: absolute; top: -120px; right: -100px;
-    width: 600px; height: 600px;
-    background: radial-gradient(ellipse, rgba(0,160,140,0.13) 0%, transparent 65%);
+    position: absolute; top: -80px; right: -60px;
+    width: 420px; height: 420px;
+    background: radial-gradient(ellipse, rgba(0,160,140,0.16) 0%, transparent 65%);
     pointer-events: none;
 }
 .hero::after {
     content: '';
-    position: absolute; bottom: -100px; left: 45%;
-    width: 500px; height: 500px;
+    position: absolute; bottom: -60px; left: 50%;
+    width: 360px; height: 360px;
     background: radial-gradient(ellipse, rgba(0,40,120,0.1) 0%, transparent 65%);
     pointer-events: none;
 }
 .hero-kicker {
-    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    font-size: 10px; font-weight: 700; letter-spacing: 3px;
     text-transform: uppercase; color: #00ccaa;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 .hero-title {
-    font-size: 52px; font-weight: 800; color: #ffffff;
-    line-height: 1.1; margin-bottom: 22px;
-    max-width: 720px; letter-spacing: -0.5px;
+    font-size: 36px; font-weight: 800; color: #ffffff;
+    line-height: 1.15; margin-bottom: 10px;
+    max-width: 680px; letter-spacing: -0.5px;
 }
 .hero-title em { color: #00ffbf; font-style: normal; }
 .hero-body {
-    font-size: 17px; color: rgba(255,255,255,0.55);
-    line-height: 1.8; max-width: 560px;
-    font-weight: 300; margin-bottom: 44px;
+    font-size: 14px; color: rgba(255,255,255,0.5);
+    line-height: 1.7; max-width: 540px;
+    font-weight: 300; margin-bottom: 0;
 }
-.hero-cta {
-    display: inline-block;
-    background: #00ffbf; color: #000028;
-    font-size: 15px; font-weight: 700;
-    padding: 15px 36px; cursor: pointer;
-    letter-spacing: 0.4px;
-    border: none; outline: none;
-    text-decoration: none;
-}
-.hero-cta:hover { background: #00e6aa; }
 .hero-stats {
-    display: flex; gap: 60px;
-    margin-top: 60px; padding-top: 40px;
+    display: flex; gap: 48px;
+    margin-top: 24px; padding-top: 20px;
     border-top: 1px solid rgba(255,255,255,0.07);
+    align-items: center;
 }
 .hs-val {
-    font-size: 40px; font-weight: 900; color: #00ffbf;
+    font-size: 34px; font-weight: 900; color: #00ffbf;
     line-height: 1; letter-spacing: -1px;
 }
-.hs-val.md { font-size: 20px; font-weight: 700; padding-top: 8px; color: #ffffff; }
+.hs-val.md { font-size: 17px; font-weight: 700; padding-top: 5px; color: #ffffff; letter-spacing: 0; }
 .hs-label {
-    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.32);
-    text-transform: uppercase; letter-spacing: 1.8px; margin-top: 7px;
+    font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.3);
+    text-transform: uppercase; letter-spacing: 1.8px; margin-top: 5px;
 }
 
 /* ══════════════════════════════════════════
    CONTENT AREA
 ══════════════════════════════════════════ */
-.content { background: #000028; padding: 44px 60px 80px 60px; }
+.content { background: #000028; padding: 28px 60px 60px 60px; }
 
 /* ══════════════════════════════════════════
-   TABS — Siemens.com tab style
+   TABS — bold, prominent, attractive
 ══════════════════════════════════════════ */
 .stTabs [data-baseweb="tab-list"] {
-    background: transparent !important;
-    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
-    gap: 0 !important; padding: 0 !important;
+    background: #00001e !important;
+    border-bottom: 2px solid rgba(255,255,255,0.07) !important;
+    gap: 0 !important; padding: 0 60px !important;
     margin: 0 !important;
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent !important;
-    color: rgba(255,255,255,0.45) !important;
-    font-weight: 500 !important; font-size: 14px !important;
-    padding: 16px 32px !important;
+    color: rgba(255,255,255,0.38) !important;
+    font-weight: 700 !important; font-size: 13px !important;
+    padding: 18px 36px !important;
     border: none !important;
     border-bottom: 3px solid transparent !important;
-    margin-bottom: -1px !important;
-    letter-spacing: 0.1px !important;
+    margin-bottom: -2px !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
     transition: all 0.2s !important;
 }
-.stTabs [data-baseweb="tab"]:hover { color: rgba(255,255,255,0.8) !important; }
+.stTabs [data-baseweb="tab"]:hover {
+    color: rgba(255,255,255,0.75) !important;
+    background: rgba(255,255,255,0.03) !important;
+}
 .stTabs [aria-selected="true"] {
-    color: #ffffff !important; font-weight: 700 !important;
+    color: #00ffbf !important;
+    font-weight: 800 !important;
     border-bottom: 3px solid #00ffbf !important;
+    background: rgba(0,255,191,0.04) !important;
+    letter-spacing: 0.8px !important;
 }
 .stTabs [data-baseweb="tab-panel"] {
     background: transparent !important; padding: 0 !important;
@@ -616,14 +612,13 @@ st.markdown(f"""
 <div class="hero">
     <div class="hero-kicker">Siemens · Internal Platform · Press Intelligence</div>
     <div class="hero-title">
-        Building the intelligence layer<br>for <em>Siemens Press</em>
+        Siemens <em>Press Intelligence</em> Platform
     </div>
     <div class="hero-body">
         Scrape, analyse and explore Siemens global press releases by date range.
         Upload PDFs for instant date analysis — or run the live scraper to surface
         the latest news across all business units.
     </div>
-    <a class="hero-cta">Get started ↓</a>
     <div class="hero-stats">
         <div>
             <div class="hs-val">{n_a}</div>
