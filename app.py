@@ -643,10 +643,19 @@ with tab1:
         st.markdown('<div class="card-header"><span class="card-title">⚙ Scraper Configuration</span><span class="badge-green">ScraperAPI</span></div>', unsafe_allow_html=True)
         st.markdown('<div class="card-body">', unsafe_allow_html=True)
 
-        pages = st.number_input("Pages to Scrape", min_value=1, max_value=20, value=1,
-                                help="Each page retrieves approximately 10 articles.")
+        pages_options = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        pages_label = st.selectbox(
+            "Articles to Scrape",
+            options=pages_options,
+            index=0,
+            format_func=lambda x: f"{x} articles (~{x//10} page{'s' if x//10>1 else ''})",
+            help="Select how many articles to scrape. Each page = ~10 articles."
+        )
+        pages = pages_label // 10  # convert to page count for scraper
         st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
         fetch_full = st.checkbox("Fetch Full Article Body", value=False)
+        scrape_pdfs = st.checkbox("Scrape Article PDFs", value=True,
+                                  help="Find and collect PDF download links from each article page")
 
         st.markdown(f"""
         <div class="cfg-grid">
@@ -656,7 +665,7 @@ with tab1:
             </div>
             <div class="cfg-box">
                 <div class="cfg-label">Est. Articles</div>
-                <div class="cfg-val">{pages * 10}</div>
+                <div class="cfg-val">{pages_label}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -703,7 +712,7 @@ with tab1:
             st.session_state.scraper_log.append((datetime.now().strftime("%H:%M:%S"), k, m))
             render_log()
         log("Initialising SiDocs AI scraper...", "info")
-        log(f"Target: press.siemens.com  |  Pages: {pages}  |  Full fetch: {fetch_full}", "info")
+        log(f"Target: press.siemens.com  |  Pages: {pages}  |  Full fetch: {fetch_full}  |  PDF scrape: {scrape_pdfs}", "info")
         prog_ph.progress(5)
         try:
             sys.path.insert(0, "/mnt/user-data/uploads")
@@ -721,7 +730,41 @@ with tab1:
                         b = scrape_article_content(a["url"])
                         if b: a["body"] = b
                         log(f"  [{i+1}/{len(raw)}] {a['title'][:55]}...", "ok")
-                        prog_ph.progress(40 + int(40*(i+1)/len(raw)))
+                        prog_ph.progress(40 + int(25*(i+1)/len(raw)))
+
+                # Scrape PDF links
+                if scrape_pdfs:
+                    log("Scraping PDF links from article pages...", "info")
+                    import requests as _req
+                    from bs4 import BeautifulSoup as _BS
+                    import warnings as _w; _w.filterwarnings("ignore")
+                    _HEADERS = {"User-Agent": "Mozilla/5.0"}
+                    def _get_pdf_link(url):
+                        try:
+                            r = _req.get(url, headers=_HEADERS, verify=False, timeout=20)
+                            soup = _BS(r.text, "html.parser")
+                            for a_tag in soup.find_all("a", href=True):
+                                href = a_tag["href"]
+                                txt = a_tag.get_text(strip=True).lower()
+                                if href.lower().endswith(".pdf") or "pdf" in txt:
+                                    if href.startswith("http"):
+                                        return href
+                                    if href.startswith("/"):
+                                        return "https://press.siemens.com" + href
+                        except Exception:
+                            pass
+                        return None
+                    for i, a in enumerate(raw):
+                        pdf_url = _get_pdf_link(a["url"])
+                        a["pdf_url"] = pdf_url or ""
+                        if pdf_url:
+                            log(f"  [{i+1}/{len(raw)}] PDF found: {a['title'][:45]}...", "ok")
+                        else:
+                            log(f"  [{i+1}/{len(raw)}] No PDF: {a['title'][:45]}...", "dim")
+                        prog_ph.progress(65 + int(25*(i+1)/len(raw)))
+                    pdfs_found = sum(1 for a in raw if a.get("pdf_url"))
+                    log(f"PDF scraping complete — {pdfs_found}/{len(raw)} PDFs found", "ok")
+
                 log("Detecting categories...", "info")
                 for a in raw:
                     a["category"] = detect_category(a["title"], a["url"], a.get("body",""))
@@ -793,19 +836,38 @@ with tab1:
             """, unsafe_allow_html=True)
 
         st.markdown('<div class="sec-label">Article List</div>', unsafe_allow_html=True)
+
+        # Download All PDFs button
+        all_pdfs = [a for a in a2 if a.get("pdf_url")]
+        if all_pdfs:
+            pdf_links_csv = "\n".join([f"{a.get('title','')[:60]},{a.get('pdf_url','')}" for a in all_pdfs])
+            col_dl1, col_dl2 = st.columns([2,1], gap="medium")
+            with col_dl1:
+                st.markdown(f'<div style="padding:14px 20px;background:rgba(0,255,191,0.06);border:1px solid rgba(0,255,191,0.2);border-left:4px solid #00ffbf;font-size:13px;color:rgba(255,255,255,0.7);"><b style="color:#00ffbf;">{len(all_pdfs)} PDFs found</b> — Download individual PDFs from the table below, or export all links at once.</div>', unsafe_allow_html=True)
+            with col_dl2:
+                st.download_button(
+                    "⬇  Export All PDF Links (CSV)",
+                    data=("Title,PDF URL\n" + pdf_links_csv).encode(),
+                    file_name=f"siemens_pdf_links_{datetime.now().strftime('%Y%m%d')}.csv",
+                    mime="text/csv"
+                )
+
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown(f'<div class="card-header"><span class="card-title">Scraped Articles</span><span class="badge-green">{len(a2)} Results</span></div>', unsafe_allow_html=True)
         rows = ""
         for i, a in enumerate(a2[:60], 1):
             cat = a.get("category","Siemens AG")
             sty = CAT.get(cat, DEF_CAT)
+            pdf_url = a.get("pdf_url", "")
+            pdf_cell = f'<a href="{pdf_url}" target="_blank" style="display:inline-block;padding:4px 10px;background:rgba(0,255,191,0.12);color:#00ffbf;border:1px solid rgba(0,255,191,0.3);font-size:10px;font-weight:700;text-decoration:none;letter-spacing:0.5px;white-space:nowrap;">⬇ PDF</a>' if pdf_url else '<span style="font-size:10px;color:rgba(255,255,255,0.18);">—</span>'
             rows += f"""<tr>
                 <td class="td-num">{i:02d}</td>
                 <td class="td-date">{a.get('date','—')}</td>
-                <td class="td-title">{a.get('title','')[:90]}</td>
+                <td class="td-title"><a href="{a.get('url','#')}" target="_blank" style="color:#ffffff;text-decoration:none;font-weight:500;">{a.get('title','')[:80]}</a></td>
                 <td style="width:165px;"><span class="cat-tag" style="{sty}">{cat}</span></td>
+                <td style="width:80px;text-align:center;">{pdf_cell}</td>
             </tr>"""
-        st.markdown(f'<div style="overflow-x:auto;"><table class="si-table"><thead><tr><th>#</th><th>Date</th><th>Title</th><th>Category</th></tr></thead><tbody>{rows}</tbody></table></div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="overflow-x:auto;"><table class="si-table"><thead><tr><th>#</th><th>Date</th><th>Title</th><th>Category</th><th>PDF</th></tr></thead><tbody>{rows}</tbody></table></div>', unsafe_allow_html=True)
         if len(a2) > 60:
             st.markdown(f'<div style="padding:12px 18px;font-size:12px;color:rgba(255,255,255,0.22);">Showing 60 of {len(a2)} articles — switch to Article Explorer for full view.</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
@@ -1025,7 +1087,9 @@ with tab3:
                 sty  = CAT.get(cat, DEF_CAT)
                 snip = (a.get("body","") or a.get("summary",""))[:90]
                 url  = a.get("url","#")
+                pdf_url = a.get("pdf_url","")
                 snip_html = f'<div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;">{snip}{"..." if len(snip)==90 else ""}</div>' if snip else ""
+                pdf_cell = f'<a href="{pdf_url}" target="_blank" style="display:inline-block;padding:4px 10px;background:rgba(0,255,191,0.12);color:#00ffbf;border:1px solid rgba(0,255,191,0.3);font-size:10px;font-weight:700;text-decoration:none;letter-spacing:0.5px;white-space:nowrap;">⬇ PDF</a>' if pdf_url else '<span style="font-size:10px;color:rgba(255,255,255,0.18);">—</span>'
                 rows += f"""<tr>
                     <td style="padding:14px 18px;font-size:11px;color:rgba(255,255,255,0.3);width:40px;border-bottom:1px solid rgba(255,255,255,0.045);">{i:02d}</td>
                     <td style="padding:14px 18px;font-size:13px;color:#00ffbf;font-weight:600;white-space:nowrap;width:130px;border-bottom:1px solid rgba(255,255,255,0.045);">{a.get('date','&#8212;')}</td>
@@ -1034,6 +1098,7 @@ with tab3:
                         {snip_html}
                     </td>
                     <td style="padding:14px 18px;width:165px;border-bottom:1px solid rgba(255,255,255,0.045);"><span style="display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:0.4px;white-space:nowrap;{sty}">{cat}</span></td>
+                    <td style="padding:14px 18px;width:80px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.045);">{pdf_cell}</td>
                 </tr>"""
 
             table_html = f"""<!DOCTYPE html>
@@ -1062,7 +1127,7 @@ tr:hover td {{ background:rgba(0,255,191,0.04); }}
   </div>
   <div style="overflow-x:auto;">
     <table>
-      <thead><tr><th>#</th><th>Date</th><th>Title</th><th>Category</th></tr></thead>
+      <thead><tr><th>#</th><th>Date</th><th>Title</th><th>Category</th><th>PDF</th></tr></thead>
       <tbody>{rows}</tbody>
     </table>
   </div>
