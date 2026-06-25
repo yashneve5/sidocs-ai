@@ -91,49 +91,73 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 .subnav-item.active { color: #ffffff; border-bottom-color: #00ffbf; font-weight: 600; }
 
 /* ══════════════════════════════════════════
-   HERO — compact version, no wasted space
+   HERO — Siemens geometric teal arrows bg
 ══════════════════════════════════════════ */
 .hero {
-    background: linear-gradient(135deg, #000028 60%, #000a38 100%);
+    background: #000028;
     padding: 36px 60px 28px 60px;
     position: relative; overflow: hidden;
     border-bottom: 1px solid rgba(255,255,255,0.07);
 }
+/* Large teal chevron — back layer */
 .hero::before {
     content: '';
-    position: absolute; top: -80px; right: -60px;
-    width: 420px; height: 420px;
-    background: radial-gradient(ellipse, rgba(0,160,140,0.16) 0%, transparent 65%);
+    position: absolute;
+    top: -30px; right: -80px;
+    width: 0; height: 0;
+    border-top: 240px solid transparent;
+    border-bottom: 240px solid transparent;
+    border-left: 200px solid #00ffbf;
+    opacity: 0.9;
     pointer-events: none;
 }
+/* Large teal chevron — front layer (offset to create double-arrow look) */
 .hero::after {
     content: '';
-    position: absolute; bottom: -60px; left: 50%;
-    width: 360px; height: 360px;
-    background: radial-gradient(ellipse, rgba(0,40,120,0.1) 0%, transparent 65%);
+    position: absolute;
+    top: -30px; right: 80px;
+    width: 0; height: 0;
+    border-top: 240px solid transparent;
+    border-bottom: 240px solid transparent;
+    border-left: 200px solid #00ffbf;
+    opacity: 0.45;
+    pointer-events: none;
+}
+/* Third chevron via a pseudo on .hero-bg */
+.hero-bg-arrow {
+    position: absolute;
+    top: -30px; right: 240px;
+    width: 0; height: 0;
+    border-top: 240px solid transparent;
+    border-bottom: 240px solid transparent;
+    border-left: 200px solid #00ffbf;
+    opacity: 0.18;
     pointer-events: none;
 }
 .hero-kicker {
     font-size: 10px; font-weight: 700; letter-spacing: 3px;
     text-transform: uppercase; color: #00ccaa;
-    margin-bottom: 10px;
+    margin-bottom: 10px; position: relative; z-index: 2;
 }
 .hero-title {
     font-size: 36px; font-weight: 800; color: #ffffff;
     line-height: 1.15; margin-bottom: 10px;
     max-width: 680px; letter-spacing: -0.5px;
+    position: relative; z-index: 2;
 }
 .hero-title em { color: #00ffbf; font-style: normal; }
 .hero-body {
     font-size: 14px; color: rgba(255,255,255,0.5);
     line-height: 1.7; max-width: 540px;
     font-weight: 300; margin-bottom: 0;
+    position: relative; z-index: 2;
 }
 .hero-stats {
     display: flex; gap: 48px;
     margin-top: 24px; padding-top: 20px;
     border-top: 1px solid rgba(255,255,255,0.07);
     align-items: center;
+    position: relative; z-index: 2;
 }
 .hs-val {
     font-size: 34px; font-weight: 900; color: #00ffbf;
@@ -617,6 +641,7 @@ st.markdown(f"""
 # ══════════════════════════════════════════
 st.markdown(f"""
 <div class="hero">
+    <div class="hero-bg-arrow"></div>
     <div class="hero-kicker">Siemens · Internal Platform · Press Intelligence</div>
     <div class="hero-title">
         Siemens <em>Press Intelligence</em> Platform
