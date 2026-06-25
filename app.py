@@ -151,39 +151,39 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 .content { background: #000028; padding: 28px 60px 60px 60px; }
 
 /* ══════════════════════════════════════════
-   TABS — bold, prominent, attractive
+   TABS — seamless blend with site background
 ══════════════════════════════════════════ */
 .stTabs [data-baseweb="tab-list"] {
-    background: linear-gradient(90deg, #001a1a 0%, #002020 50%, #001a1a 100%) !important;
-    border-bottom: 2px solid rgba(0,255,191,0.25) !important;
-    border-top: 1px solid rgba(0,255,191,0.1) !important;
+    background: #000028 !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    border-top: none !important;
     gap: 0 !important; padding: 0 60px !important;
     margin: 0 !important;
-    box-shadow: 0 2px 24px rgba(0,255,191,0.07) !important;
+    box-shadow: none !important;
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent !important;
-    color: rgba(0,255,191,0.35) !important;
+    color: rgba(255,255,255,0.4) !important;
     font-weight: 700 !important; font-size: 12px !important;
     padding: 18px 40px !important;
     border: none !important;
     border-bottom: 3px solid transparent !important;
-    margin-bottom: -2px !important;
+    margin-bottom: -1px !important;
     letter-spacing: 1.5px !important;
     text-transform: uppercase !important;
     transition: all 0.2s !important;
 }
 .stTabs [data-baseweb="tab"]:hover {
-    color: rgba(0,255,191,0.75) !important;
-    background: rgba(0,255,191,0.05) !important;
+    color: rgba(255,255,255,0.8) !important;
+    background: transparent !important;
 }
 .stTabs [aria-selected="true"] {
     color: #00ffbf !important;
     font-weight: 800 !important;
     border-bottom: 3px solid #00ffbf !important;
-    background: rgba(0,255,191,0.08) !important;
+    background: transparent !important;
     letter-spacing: 1.5px !important;
-    text-shadow: 0 0 20px rgba(0,255,191,0.5) !important;
+    text-shadow: none !important;
 }
 .stTabs [data-baseweb="tab-panel"] {
     background: transparent !important; padding: 0 !important;
@@ -1285,3 +1285,4 @@ tr:hover td {{ background:rgba(0,255,191,0.04); }}
             st.markdown('<div style="padding:60px;text-align:center;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);"><div style="font-size:14px;color:rgba(255,255,255,0.28);">No articles match the current filters.<br>Try adjusting the date range, category or search term.</div></div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
+            
