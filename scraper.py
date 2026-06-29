@@ -26,7 +26,7 @@ HEADERS = {
 try:
     SCRAPERAPI_KEY = st.secrets["SCRAPERAPI_KEY"]
 except Exception:
-    SCRAPERAPI_KEY = "13f8d4ab092ded8492675818e44ba486"  # ← Replace with your key
+    SCRAPERAPI_KEY = "bd199813f5038c1d45e2866d4e3df097"  # ← Replace with your key
 
 
 # ── Proxy ────────────────────────────────────────────────────
