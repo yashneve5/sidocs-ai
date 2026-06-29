@@ -1,16 +1,16 @@
 """
-SiDocs AI – Siemens Press Intelligence Dashboard
-Matches Siemens Intranet: white cards, teal-gradient nav, light grey bg
+SiDocs AI – Siemens Press Intelligence
+Exact Siemens.com design: #000028 bg, white text, #00ffbf teal CTA
+Full professional layout with perfect padding and visibility
 """
 
 import streamlit as st
 import pandas as pd
-import os, sys, re, io
+import sys, re, io
 from datetime import datetime, date
-from pathlib import Path
 
 st.set_page_config(
-    page_title="SiDocs AI | Press Intelligence",
+    page_title="SiDocs AI | Siemens Press Intelligence",
     page_icon="🔷",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -18,633 +18,914 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-*, *::before, *::after { box-sizing: border-box; }
+/* ══════════════════════════════════════════
+   GLOBAL RESET — Siemens.com dark base
+══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body, [class*="css"], .stApp {
+html, body, .stApp, [class*="css"] {
     font-family: 'Inter', 'Segoe UI', sans-serif !important;
-    background-color: #eef2f6 !important;
-    color: #1a2332 !important;
+    background-color: #000028 !important;
+    color: #ffffff !important;
+    -webkit-font-smoothing: antialiased;
 }
-
-#MainMenu, footer, header { visibility: hidden; }
+#MainMenu, footer, header { visibility: hidden !important; }
 [data-testid="stSidebar"] { display: none !important; }
 .block-container { padding: 0 !important; max-width: 100% !important; }
+section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 
-/* ── NAV ── */
-.si-nav {
-    background: linear-gradient(90deg, #002244 0%, #004466 55%, #007788 100%);
-    padding: 0 36px;
-    height: 58px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 999;
-    border-bottom: 3px solid #00cccc;
+/* ══════════════════════════════════════════
+   TOP NAV — exact Siemens.com style
+══════════════════════════════════════════ */
+.nav {
+    background: #000028;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 0 60px;
+    height: 70px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 1000;
 }
-.si-nav-logo { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 3px; }
-.si-nav-logo span { color: #00cccc; font-weight: 400; font-size: 15px; letter-spacing: 1px; margin-left: 8px; }
-.si-nav-right { display: flex; align-items: center; gap: 12px; }
-.si-nav-pill {
-    background: transparent;
-    border: 1.5px solid #00cccc;
-    color: #00cccc;
-    font-size: 11px; font-weight: 700;
-    padding: 4px 14px; border-radius: 20px; letter-spacing: 1.5px;
+.nav-logo {
+    font-size: 24px; font-weight: 900;
+    color: #ffffff; letter-spacing: 3px;
+    text-transform: uppercase;
 }
-.si-nav-chip {
-    background: rgba(255,255,255,0.1);
-    color: #cce8ee;
-    font-size: 12px; font-weight: 500;
-    padding: 5px 14px; border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.15);
+.nav-links { display: flex; gap: 36px; align-items: center; }
+.nav-link {
+    font-size: 14px; font-weight: 400;
+    color: rgba(255,255,255,0.65);
+    border-bottom: 2px solid transparent;
+    padding-bottom: 2px; cursor: pointer;
+    transition: color 0.2s;
 }
+.nav-link:hover { color: #ffffff; }
+.nav-right { display: flex; align-items: center; gap: 24px; }
+.nav-right-txt { font-size: 13px; color: rgba(255,255,255,0.55); }
+.nav-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.12); }
+.nav-login-btn {
+    font-size: 13px; font-weight: 600; color: #ffffff;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    padding: 7px 18px; cursor: pointer;
+    transition: border-color 0.2s;
+}
+.nav-login-btn:hover { border-color: #00ffbf; color: #00ffbf; }
 
-/* ── HERO ── */
-.si-hero {
-    background: linear-gradient(130deg, #002244 0%, #004466 55%, #006688 100%);
-    padding: 32px 40px 30px 40px;
-    color: #fff;
-    border-bottom: 4px solid #00aaaa;
+/* ══════════════════════════════════════════
+   SUB-NAV (secondary menu strip)
+══════════════════════════════════════════ */
+.subnav {
+    background: #000028;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0 60px;
+    display: flex; gap: 0; align-items: center;
 }
-.si-hero-eyebrow {
-    font-size: 11px; font-weight: 700;
-    color: #00cccc; letter-spacing: 2px;
-    text-transform: uppercase; margin-bottom: 8px;
+.subnav-item {
+    font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5);
+    padding: 14px 20px; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
 }
-.si-hero-title { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 6px; line-height: 1.25; }
-.si-hero-title span { color: #00cccc; }
-.si-hero-sub { font-size: 13px; color: rgba(255,255,255,0.65); max-width: 600px; line-height: 1.6; margin-bottom: 20px; }
-.si-hero-stats { display: flex; gap: 36px; }
-.si-hero-stat { border-left: 3px solid #00aaaa; padding-left: 14px; }
-.si-hero-stat-val { font-size: 24px; font-weight: 700; color: #00dddd; line-height: 1; }
-.si-hero-stat-lbl { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+.subnav-item:hover { color: #ffffff; border-bottom-color: rgba(0,255,191,0.5); }
+.subnav-item.active { color: #ffffff; border-bottom-color: #00ffbf; font-weight: 600; }
 
-/* ── BODY ── */
-.si-body { background: #eef2f6; padding: 28px 36px 40px 36px; }
-
-/* ── WHITE CARD ── */
-.si-card {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    border: 1px solid #dde4ec;
-    overflow: hidden;
+/* ══════════════════════════════════════════
+   HERO — full-width Siemens.com hero section
+══════════════════════════════════════════ */
+.hero {
+    background: #000028;
+    padding: 80px 60px 70px 60px;
+    position: relative; overflow: hidden;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    min-height: 380px;
+    display: flex; flex-direction: column; justify-content: center;
+}
+.hero::before {
+    content: '';
+    position: absolute; top: -120px; right: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(ellipse, rgba(0,160,140,0.13) 0%, transparent 65%);
+    pointer-events: none;
+}
+.hero::after {
+    content: '';
+    position: absolute; bottom: -100px; left: 45%;
+    width: 500px; height: 500px;
+    background: radial-gradient(ellipse, rgba(0,40,120,0.1) 0%, transparent 65%);
+    pointer-events: none;
+}
+.hero-kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #00ccaa;
     margin-bottom: 20px;
 }
-.si-card-head {
-    padding: 14px 20px 12px 20px;
-    border-bottom: 1px solid #eef2f6;
+.hero-title {
+    font-size: 52px; font-weight: 800; color: #ffffff;
+    line-height: 1.1; margin-bottom: 22px;
+    max-width: 720px; letter-spacing: -0.5px;
+}
+.hero-title em { color: #00ffbf; font-style: normal; }
+.hero-body {
+    font-size: 17px; color: rgba(255,255,255,0.55);
+    line-height: 1.8; max-width: 560px;
+    font-weight: 300; margin-bottom: 44px;
+}
+.hero-cta {
+    display: inline-block;
+    background: #00ffbf; color: #000028;
+    font-size: 15px; font-weight: 700;
+    padding: 15px 36px; cursor: pointer;
+    letter-spacing: 0.4px;
+    border: none; outline: none;
+    text-decoration: none;
+}
+.hero-cta:hover { background: #00e6aa; }
+.hero-stats {
+    display: flex; gap: 60px;
+    margin-top: 60px; padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+}
+.hs-val {
+    font-size: 40px; font-weight: 900; color: #00ffbf;
+    line-height: 1; letter-spacing: -1px;
+}
+.hs-val.md { font-size: 20px; font-weight: 700; padding-top: 8px; color: #ffffff; }
+.hs-label {
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.32);
+    text-transform: uppercase; letter-spacing: 1.8px; margin-top: 7px;
+}
+
+/* ══════════════════════════════════════════
+   CONTENT AREA
+══════════════════════════════════════════ */
+.content { background: #000028; padding: 44px 60px 80px 60px; }
+
+/* ══════════════════════════════════════════
+   TABS — Siemens.com tab style
+══════════════════════════════════════════ */
+.stTabs [data-baseweb="tab-list"] {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    gap: 0 !important; padding: 0 !important;
+    margin: 0 !important;
+}
+.stTabs [data-baseweb="tab"] {
+    background: transparent !important;
+    color: rgba(255,255,255,0.45) !important;
+    font-weight: 500 !important; font-size: 14px !important;
+    padding: 16px 32px !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    margin-bottom: -1px !important;
+    letter-spacing: 0.1px !important;
+    transition: all 0.2s !important;
+}
+.stTabs [data-baseweb="tab"]:hover { color: rgba(255,255,255,0.8) !important; }
+.stTabs [aria-selected="true"] {
+    color: #ffffff !important; font-weight: 700 !important;
+    border-bottom: 3px solid #00ffbf !important;
+}
+.stTabs [data-baseweb="tab-panel"] {
+    background: transparent !important; padding: 0 !important;
+}
+.stTabs [data-baseweb="tab-highlight"] { background: transparent !important; }
+
+/* ══════════════════════════════════════════
+   CARDS
+══════════════════════════════════════════ */
+.card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    margin-bottom: 24px; overflow: hidden;
+}
+.card-header {
+    padding: 16px 24px 15px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.025);
     display: flex; align-items: center; justify-content: space-between;
-    background: #f8fafc;
 }
-.si-card-title { font-size: 13px; font-weight: 700; color: #002244; letter-spacing: 0.2px; }
-.si-card-body { padding: 20px; }
-
-/* ── PILLS ── */
-.si-pill-teal { background: #e0f7f7; color: #006666; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.8px; text-transform: uppercase; }
-.si-pill-blue { background: #e0eaf5; color: #002244; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.8px; text-transform: uppercase; }
-
-/* ── METRIC CARDS (white, visible dates) ── */
-.si-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
-.si-metric {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    border: 1px solid #dde4ec;
-    border-top: 4px solid #009999;
-    padding: 18px 20px;
+.card-title {
+    font-size: 14px; font-weight: 700; color: #ffffff;
+    letter-spacing: 0.1px;
 }
-.si-metric.blue { border-top-color: #002244; }
-.si-metric.green { border-top-color: #1a7a4a; }
-.si-metric.teal2 { border-top-color: #007799; }
-.si-metric-val { font-size: 28px; font-weight: 700; color: #002244; line-height: 1.1; margin-bottom: 4px; }
-.si-metric-val.date { font-size: 16px; padding-top: 5px; color: #009999; }
-.si-metric-lbl { font-size: 10px; color: #7a8a99; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.card-body { padding: 28px 24px; }
 
-/* ── DATE RANGE BANNER (white, clear) ── */
-.si-date-banner {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    border: 1px solid #dde4ec;
-    border-left: 5px solid #009999;
-    padding: 18px 28px;
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap: wrap; gap: 16px;
-}
-.si-date-block-lbl { font-size: 10px; color: #7a8a99; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-.si-date-block-val { font-size: 18px; font-weight: 700; color: #002244; }
-.si-date-arrow { font-size: 24px; color: #009999; font-weight: 300; }
-.si-date-block-val.accent { color: #009999; }
-
-/* ── CONFIG BOXES ── */
-.si-config-box {
-    background: #f4f7fb;
-    border: 1px solid #dde4ec;
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin-bottom: 14px;
-}
-.si-config-label { font-size: 10px; color: #7a8a99; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-.si-config-val { font-size: 22px; font-weight: 700; color: #002244; }
-.si-config-sub { font-size: 11px; color: #009999; font-weight: 500; }
-
-/* ── TERMINAL ── */
-.si-terminal {
-    background: #0d1117;
-    border-radius: 8px;
-    padding: 16px 18px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    color: #4ade80;
-    min-height: 160px;
-    max-height: 280px;
-    overflow-y: auto;
-    line-height: 1.75;
-    border: 1px solid #21262d;
-}
-.t-err { color: #f87171; }
-.t-warn { color: #fbbf24; }
-.t-info { color: #38bdf8; }
-.t-ok { color: #4ade80; }
-.t-dim { color: #484f58; }
-
-/* ── TABLE ── */
-.si-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.si-table th {
-    background: #f4f7fb;
-    color: #002244;
+/* ══════════════════════════════════════════
+   BADGES
+══════════════════════════════════════════ */
+.badge-green {
+    display: inline-block;
+    background: rgba(0,255,191,0.1); color: #00ffbf;
+    border: 1px solid rgba(0,255,191,0.25);
     font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 1px;
-    padding: 10px 16px; text-align: left;
-    border-bottom: 2px solid #dde4ec;
-    white-space: nowrap;
+    padding: 3px 12px; letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+.badge-grey {
+    display: inline-block;
+    background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45);
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 10px; font-weight: 700;
+    padding: 3px 12px; letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════
+   KPI METRIC CARDS
+══════════════════════════════════════════ */
+.kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin: 28px 0; }
+.kpi {
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-top: 3px solid #00ffbf;
+    padding: 24px 22px 20px 22px;
+}
+.kpi.b  { border-top-color: #0099dd; }
+.kpi.g  { border-top-color: #00cc88; }
+.kpi.w  { border-top-color: rgba(255,255,255,0.22); }
+.kpi-val {
+    font-size: 36px; font-weight: 900; color: #00ffbf;
+    line-height: 1; margin-bottom: 8px; letter-spacing: -1px;
+}
+.kpi-val.dt { font-size: 16px; font-weight: 700; color: #ffffff; line-height: 1.4; padding-top: 7px; letter-spacing: 0; }
+.kpi-label {
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.32);
+    text-transform: uppercase; letter-spacing: 1.5px;
+}
+
+/* ══════════════════════════════════════════
+   DATE RANGE BANNER
+══════════════════════════════════════════ */
+.date-banner {
+    background: rgba(0,255,191,0.05);
+    border: 1px solid rgba(0,255,191,0.16);
+    border-left: 4px solid #00ffbf;
+    padding: 24px 32px;
+    display: flex; align-items: center; gap: 40px;
+    flex-wrap: wrap; margin: 0 0 24px 0;
+}
+.db-block {}
+.db-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.32); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+.db-value { font-size: 20px; font-weight: 700; color: #ffffff; }
+.db-value.teal { color: #00ffbf; }
+.db-arrow { font-size: 24px; color: rgba(0,255,191,0.6); flex-shrink: 0; }
+
+/* ══════════════════════════════════════════
+   SECTION DIVIDER LABEL
+══════════════════════════════════════════ */
+.sec-label {
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.28);
+    text-transform: uppercase; letter-spacing: 2px;
+    margin: 36px 0 14px 0;
+    display: flex; align-items: center; gap: 14px;
+}
+.sec-label::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.06); }
+
+/* ══════════════════════════════════════════
+   TERMINAL LOG
+══════════════════════════════════════════ */
+.terminal {
+    background: #00001c;
+    border: 1px solid rgba(0,255,191,0.1);
+    padding: 20px 22px;
+    font-family: 'Courier New', monospace;
+    font-size: 12.5px; line-height: 1.9;
+    min-height: 200px; max-height: 320px; overflow-y: auto;
+    color: #00ffbf;
+}
+.t-ok   { color: #00ffbf; }
+.t-info { color: #60c8e8; }
+.t-warn { color: #ffd166; }
+.t-err  { color: #ff6b6b; }
+.t-dim  { color: rgba(255,255,255,0.18); }
+
+/* ══════════════════════════════════════════
+   DATA TABLE
+══════════════════════════════════════════ */
+.si-table { width: 100%; border-collapse: collapse; }
+.si-table th {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; color: rgba(255,255,255,0.6);
+    padding: 12px 18px; text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.02);
 }
 .si-table td {
-    padding: 11px 16px;
-    color: #2a3a4a;
-    border-bottom: 1px solid #f0f4f8;
+    padding: 14px 18px; font-size: 13px;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255,255,255,0.045);
     vertical-align: middle;
 }
 .si-table tr:last-child td { border-bottom: none; }
-.si-table tr:hover td { background: #f7fbfb; }
-.cat-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.3px; white-space: nowrap;
+.si-table tr:hover td { background: rgba(0,255,191,0.04); }
+.td-num  { color: rgba(255,255,255,0.2) !important; font-size: 11px !important; width: 40px !important; }
+.td-date { color: #00ffbf !important; font-weight: 600 !important; white-space: nowrap !important; width: 130px !important; }
+.td-title { font-weight: 500 !important; color: #ffffff !important; }
+.td-snip  { font-size: 11px !important; color: rgba(255,255,255,0.55) !important; margin-top: 3px !important; }
+.cat-tag {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 10px; letter-spacing: 0.4px;
+    white-space: nowrap;
 }
 
-/* ── FILTER ROW ── */
-.si-filter-row {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    border: 1px solid #dde4ec;
-    padding: 16px 20px;
-    margin-bottom: 20px;
+/* ══════════════════════════════════════════
+   SMALL INFO BOXES
+══════════════════════════════════════════ */
+.info-box {
+    background: rgba(0,255,191,0.05);
+    border: 1px solid rgba(0,255,191,0.14);
+    border-left: 3px solid #00ffbf;
+    padding: 18px 22px; margin: 14px 0;
+    display: flex; align-items: center; gap: 16px;
 }
+.info-box-num { font-size: 36px; font-weight: 900; color: #00ffbf; line-height: 1; }
+.info-box-txt { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+.info-box-txt strong { color: #ffffff; display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
 
-/* ── STREAMLIT WIDGET OVERRIDES ── */
+.warn-box {
+    background: rgba(255,107,107,0.06);
+    border: 1px solid rgba(255,107,107,0.18);
+    border-left: 3px solid #ff6b6b;
+    padding: 18px 22px;
+}
+.warn-box-title { font-size: 14px; font-weight: 700; color: #ff6b6b; margin-bottom: 6px; }
+.warn-box-body  { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+.empty-state {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 380px; text-align: center;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 60px 40px;
+}
+.empty-icon { font-size: 56px; opacity: 0.18; margin-bottom: 20px; }
+.empty-title { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 10px; }
+.empty-sub   { font-size: 14px; color: rgba(255,255,255,0.3); line-height: 1.7; max-width: 320px; }
+
+/* ══════════════════════════════════════════
+   CFG MINI BOXES
+══════════════════════════════════════════ */
+.cfg-grid { display: grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+.cfg-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    padding: 14px 16px;
+}
+.cfg-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.3px; color: rgba(255,255,255,0.3); margin-bottom: 5px; }
+.cfg-val   { font-size: 22px; font-weight: 800; color: #00ffbf; line-height: 1; }
+.cfg-val.sm { font-size: 12px; font-weight: 600; color: #00ffbf; }
+
+/* ══════════════════════════════════════════
+   FILTER BAR
+══════════════════════════════════════════ */
+.filter-bar {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 22px 24px 24px 24px; margin-bottom: 24px;
+}
+.filter-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.8px; margin-bottom: 18px; }
+
+/* ══════════════════════════════════════════
+   STREAMLIT WIDGETS — ALL DARK
+══════════════════════════════════════════ */
+
+/* Buttons */
 .stButton > button {
-    background: #009999 !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 11px 24px !important;
-    width: 100% !important;
-    letter-spacing: 0.3px !important;
+    background: #00ffbf !important; color: #000028 !important;
+    font-weight: 700 !important; font-size: 14px !important;
+    border: none !important; border-radius: 0 !important;
+    padding: 14px 32px !important; width: 100% !important;
+    letter-spacing: 0.4px !important; cursor: pointer !important;
+    transition: background 0.15s !important;
 }
-.stButton > button:hover { background: #007a7a !important; }
+.stButton > button:hover { background: #00e0aa !important; }
+.stButton > button:focus { box-shadow: none !important; outline: 2px solid rgba(0,255,191,0.4) !important; }
 
 .stDownloadButton > button {
-    background: #ffffff !important;
-    color: #009999 !important;
-    border: 2px solid #009999 !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-    border-radius: 8px !important;
-    padding: 10px 24px !important;
-    width: 100% !important;
-}
-.stDownloadButton > button:hover { background: #f0fafa !important; }
-
-/* Date inputs, selects — white bg with visible text */
-div[data-baseweb="select"] > div {
-    background: #ffffff !important;
-    border: 1.5px solid #c0cdd8 !important;
-    border-radius: 8px !important;
-    color: #1a2332 !important;
-}
-div[data-baseweb="select"] * { color: #1a2332 !important; }
-
-.stDateInput > div > div > input {
-    background: #ffffff !important;
-    border: 1.5px solid #c0cdd8 !important;
-    border-radius: 8px !important;
-    color: #1a2332 !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
-    padding: 8px 12px !important;
-}
-.stTextInput input {
-    background: #ffffff !important;
-    border: 1.5px solid #c0cdd8 !important;
-    border-radius: 8px !important;
-    color: #1a2332 !important;
-    font-size: 14px !important;
-}
-.stNumberInput input {
-    background: #ffffff !important;
-    border: 1.5px solid #c0cdd8 !important;
-    border-radius: 8px !important;
-    color: #1a2332 !important;
-    font-size: 14px !important;
-}
-.stCheckbox span { color: #1a2332 !important; font-size: 13px !important; }
-.stProgress > div > div { background: #009999 !important; }
-
-/* Labels above inputs */
-label, .stSelectbox label, .stNumberInput label,
-.stDateInput label, .stCheckbox label, .stTextInput label {
-    color: #4a6070 !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.8px !important;
-    margin-bottom: 4px !important;
-}
-
-/* Tabs */
-.stTabs [data-baseweb="tab-list"] {
-    background: transparent;
-    border-bottom: 2px solid #dde4ec;
-    gap: 4px;
-    padding: 0 4px;
-}
-.stTabs [data-baseweb="tab"] {
-    color: #7a8a99 !important;
-    font-weight: 500 !important;
-    font-size: 14px !important;
-    padding: 10px 20px !important;
+    background: transparent !important; color: #00ffbf !important;
+    border: 1.5px solid rgba(0,255,191,0.45) !important;
+    font-weight: 700 !important; font-size: 13px !important;
     border-radius: 0 !important;
-    border-bottom: 3px solid transparent !important;
-    margin-bottom: -2px !important;
-    background: transparent !important;
+    padding: 13px 28px !important; width: 100% !important;
 }
-.stTabs [aria-selected="true"] {
-    color: #002244 !important;
-    font-weight: 700 !important;
-    border-bottom: 3px solid #009999 !important;
-    background: transparent !important;
+.stDownloadButton > button:hover { background: rgba(0,255,191,0.07) !important; }
+
+/* All labels */
+label,
+.stSelectbox label,
+.stNumberInput label,
+.stDateInput label,
+.stCheckbox label,
+.stTextInput label {
+    color: rgba(255,255,255,0.38) !important;
+    font-size: 10px !important; font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.3px !important;
+    margin-bottom: 7px !important;
+    display: block !important;
 }
+
+/* Date inputs */
+.stDateInput > div { width: 100% !important; }
+.stDateInput input, input[type="date"] {
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.16) !important;
+    border-radius: 0 !important;
+    color: #ffffff !important;
+    font-size: 15px !important; font-weight: 600 !important;
+    padding: 13px 16px !important;
+    width: 100% !important;
+    outline: none !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+.stDateInput input:focus, input[type="date"]:focus {
+    border-color: rgba(0,255,191,0.5) !important;
+    background: rgba(255,255,255,0.09) !important;
+}
+/* Kill the white calendar popup */
+[data-baseweb="popover"] { background: #000a38 !important; }
+[data-baseweb="calendar"] { background: #000a38 !important; border: 1px solid rgba(0,255,191,0.18) !important; }
+[data-baseweb="calendar"] * { color: #ffffff !important; }
+[data-baseweb="calendar"] button { background: transparent !important; color: #ffffff !important; border: none !important; }
+[data-baseweb="calendar"] [aria-selected="true"] { background: #00ffbf !important; color: #000028 !important; }
+[data-baseweb="calendar"] [data-testid="day"]:hover { background: rgba(0,255,191,0.15) !important; }
+
+/* Number input */
+.stNumberInput input {
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.16) !important;
+    border-radius: 0 !important;
+    color: #ffffff !important;
+    font-size: 16px !important; font-weight: 700 !important;
+    padding: 13px 16px !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+.stNumberInput input:focus { border-color: rgba(0,255,191,0.5) !important; }
+.stNumberInput [data-testid="stNumberInputStepUp"],
+.stNumberInput [data-testid="stNumberInputStepDown"] {
+    background: rgba(255,255,255,0.07) !important;
+    border-color: rgba(255,255,255,0.16) !important;
+    color: #ffffff !important;
+}
+
+/* Text input */
+.stTextInput input {
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.16) !important;
+    border-radius: 0 !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    padding: 13px 16px !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+.stTextInput input::placeholder { color: rgba(255,255,255,0.22) !important; }
+.stTextInput input:focus { border-color: rgba(0,255,191,0.5) !important; }
+
+/* Select dropdown */
+div[data-baseweb="select"] > div {
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.16) !important;
+    border-radius: 0 !important;
+    color: #ffffff !important;
+    padding: 6px 2px !important;
+    min-height: 48px !important;
+}
+div[data-baseweb="select"] span,
+div[data-baseweb="select"] input { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+div[data-baseweb="select"] svg { fill: rgba(255,255,255,0.45) !important; }
+div[data-baseweb="select"] > div:focus-within { border-color: rgba(0,255,191,0.45) !important; }
+div[data-baseweb="menu"] { background: #000a38 !important; border: 1px solid rgba(0,255,191,0.15) !important; }
+div[data-baseweb="option"] { background: transparent !important; color: rgba(255,255,255,0.8) !important; font-size: 14px !important; padding: 12px 16px !important; }
+div[data-baseweb="option"]:hover { background: rgba(0,255,191,0.08) !important; color: #ffffff !important; }
+
+/* Checkbox */
+.stCheckbox { margin-top: 6px !important; }
+.stCheckbox > label { text-transform: none !important; font-size: 13px !important; font-weight: 400 !important; letter-spacing: 0 !important; color: rgba(255,255,255,0.65) !important; }
+.stCheckbox [data-baseweb="checkbox"] > div { background: rgba(255,255,255,0.08) !important; border-color: rgba(255,255,255,0.2) !important; border-radius: 0 !important; }
+.stCheckbox input:checked + div { background: #00ffbf !important; border-color: #00ffbf !important; }
 
 /* File uploader */
 [data-testid="stFileUploader"] {
-    background: #f4fbfb !important;
-    border: 2px dashed #009999 !important;
-    border-radius: 10px !important;
+    background: rgba(0,255,191,0.03) !important;
+    border: 2px dashed rgba(0,255,191,0.25) !important;
+    border-radius: 0 !important;
 }
-[data-testid="stFileUploader"] label { color: #009999 !important; text-transform: none !important; font-size: 13px !important; }
+[data-testid="stFileUploaderDropzone"] { background: transparent !important; padding: 24px !important; }
+[data-testid="stFileUploaderDropzoneInstructions"] { color: rgba(255,255,255,0.5) !important; }
+[data-testid="stFileUploaderDropzoneInstructions"] * { color: rgba(255,255,255,0.5) !important; }
+[data-testid="stFileUploader"] button {
+    background: rgba(255,255,255,0.07) !important;
+    color: rgba(255,255,255,0.75) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    border-radius: 0 !important; font-size: 13px !important;
+}
+[data-testid="stFileUploader"] small { color: rgba(255,255,255,0.25) !important; }
+[data-testid="stFileUploader"] label { color: rgba(255,255,255,0.55) !important; font-size: 14px !important; font-weight: 400 !important; text-transform: none !important; letter-spacing: 0 !important; }
+[data-testid="stFileUploader"] p { color: rgba(255,255,255,0.45) !important; }
+
+/* Progress */
+.stProgress > div > div { background: #00ffbf !important; }
+[data-testid="stProgress"] > div { background: rgba(255,255,255,0.07) !important; border-radius: 0 !important; }
 
 /* Expander */
-div[data-testid="stExpander"] {
-    background: #ffffff;
-    border: 1px solid #dde4ec !important;
-    border-radius: 10px !important;
-}
+details { background: rgba(255,255,255,0.025) !important; border: 1px solid rgba(255,255,255,0.07) !important; padding: 0 !important; }
+summary { color: rgba(255,255,255,0.75) !important; padding: 14px 18px !important; font-size: 13px !important; font-weight: 600 !important; }
+
+/* Alert/info boxes */
+.stAlert { border-radius: 0 !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ── Session State ────────────────────────────────────────────
+# ── Session ──────────────────────────────────────────────────
 for k, v in [("scraped_articles",[]), ("scraper_log",[])]:
-    if k not in st.session_state:
-        st.session_state[k] = v
+    if k not in st.session_state: st.session_state[k] = v
 
-# ── Helpers ──────────────────────────────────────────────────
 def parse_d(d):
     if not d: return None
     for fmt in ["%d %B %Y","%B %d, %Y","%d %b %Y","%Y-%m-%d"]:
-        try: return datetime.strptime(d.strip(), fmt).date()
+        try: return datetime.strptime(str(d).strip(), fmt).date()
         except: pass
     return None
 
-CAT_STYLE = {
-    "Digital Industries":   "background:#dbeafe; color:#1e40af;",
-    "Smart Infrastructure": "background:#d1fae5; color:#065f46;",
-    "Siemens Mobility":     "background:#ede9fe; color:#5b21b6;",
-    "Financial Services":   "background:#ffedd5; color:#9a3412;",
-    "Siemens AG":           "background:#f1f5f9; color:#334155;",
-    "AI & Innovation":      "background:#fce7f3; color:#9d174d;",
-    "Sustainability":       "background:#dcfce7; color:#14532d;",
+CAT = {
+    "Digital Industries":   "background:rgba(59,130,246,0.18);color:#93c5fd;border:1px solid rgba(59,130,246,0.28);",
+    "Smart Infrastructure": "background:rgba(16,185,129,0.18);color:#6ee7b7;border:1px solid rgba(16,185,129,0.28);",
+    "Siemens Mobility":     "background:rgba(139,92,246,0.18);color:#c4b5fd;border:1px solid rgba(139,92,246,0.28);",
+    "Financial Services":   "background:rgba(245,158,11,0.18);color:#fcd34d;border:1px solid rgba(245,158,11,0.28);",
+    "Siemens AG":           "background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.12);",
+    "AI & Innovation":      "background:rgba(236,72,153,0.18);color:#f9a8d4;border:1px solid rgba(236,72,153,0.28);",
+    "Sustainability":       "background:rgba(0,255,191,0.12);color:#00ffbf;border:1px solid rgba(0,255,191,0.25);",
 }
+DEF_CAT = "background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.12);"
 
-# ── NAV ─────────────────────────────────────────────────────
-arts = st.session_state.scraped_articles
-vd = sorted([d for d in [parse_d(a.get("date","")) for a in arts] if d])
-n_arts = len(arts)
-n_cats = len(set(a.get("category","") for a in arts)) if arts else 0
-date_span = f"{vd[0].strftime('%d %b %Y')}  →  {vd[-1].strftime('%d %b %Y')}" if vd else "No data yet"
+arts  = st.session_state.scraped_articles
+vd    = sorted([d for d in [parse_d(a.get("date","")) for a in arts] if d])
+n_a   = len(arts)
+n_c   = len(set(a.get("category","") for a in arts)) if arts else 0
+dspan = f"{vd[0].strftime('%d %b %Y')}  →  {vd[-1].strftime('%d %b %Y')}" if vd else "No data yet"
 
-st.markdown("""
-<div class="si-nav">
-    <div class="si-nav-logo">SIEMENS <span>· SiDocs AI</span></div>
-    <div class="si-nav-right">
-        <span class="si-nav-pill">PRESS INTELLIGENCE</span>
-        <span class="si-nav-chip">⊞ Company Hub</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ── HERO ─────────────────────────────────────────────────────
+# ══════════════════════════════════════════
+# TOP NAV
+# ══════════════════════════════════════════
 st.markdown(f"""
-<div class="si-hero">
-    <div class="si-hero-eyebrow">Siemens · Internal Platform</div>
-    <div class="si-hero-title">Press Release <span>Intelligence</span> Dashboard</div>
-    <div class="si-hero-sub">Scrape · Analyse · Filter Siemens press releases by date range — upload PDFs or run the live scraper to get started.</div>
-    <div class="si-hero-stats">
-        <div class="si-hero-stat">
-            <div class="si-hero-stat-val">{n_arts}</div>
-            <div class="si-hero-stat-lbl">Articles Loaded</div>
+<div class="nav">
+    <div class="nav-logo">SIEMENS</div>
+    <div class="nav-links">
+        <span class="nav-link">Products &amp; services</span>
+        <span class="nav-link">Solutions</span>
+        <span class="nav-link">Industries</span>
+        <span class="nav-link">Topics &amp; insights</span>
+    </div>
+    <div class="nav-right">
+        <span class="nav-right-txt">🌐 India | EN</span>
+        <span class="nav-right-txt">Support ▾</span>
+        <div class="nav-sep"></div>
+        <span class="nav-login-btn">SiDocs AI</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════
+# HERO
+# ══════════════════════════════════════════
+st.markdown(f"""
+<div class="hero">
+    <div class="hero-kicker">Siemens · Internal Platform · Press Intelligence</div>
+    <div class="hero-title">
+        Building the intelligence layer<br>for <em>Siemens Press</em>
+    </div>
+    <div class="hero-body">
+        Scrape, analyse and explore Siemens global press releases by date range.
+        Upload PDFs for instant date analysis — or run the live scraper to surface
+        the latest news across all business units.
+    </div>
+    <a class="hero-cta">Get started ↓</a>
+    <div class="hero-stats">
+        <div>
+            <div class="hs-val">{n_a}</div>
+            <div class="hs-label">Articles Loaded</div>
         </div>
-        <div class="si-hero-stat">
-            <div class="si-hero-stat-val">{n_cats}</div>
-            <div class="si-hero-stat-lbl">Categories</div>
+        <div>
+            <div class="hs-val">{n_c}</div>
+            <div class="hs-label">Categories</div>
         </div>
-        <div class="si-hero-stat">
-            <div class="si-hero-stat-val" style="font-size:15px; padding-top:4px;">{date_span}</div>
-            <div class="si-hero-stat-lbl">Coverage Window</div>
+        <div>
+            <div class="hs-val md">{dspan}</div>
+            <div class="hs-label">Coverage Window</div>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ── BODY + TABS ──────────────────────────────────────────────
-st.markdown('<div class="si-body">', unsafe_allow_html=True)
-
+# ══════════════════════════════════════════
+# TABS
+# ══════════════════════════════════════════
+st.markdown('<div style="background:#000028; padding: 0 60px; border-bottom:1px solid rgba(255,255,255,0.06);">', unsafe_allow_html=True)
 tab1, tab2, tab3 = st.tabs([
     "  🌐  Live Scraper  ",
     "  📄  PDF Upload & Date Check  ",
     "  📊  Article Explorer  ",
 ])
+st.markdown('</div>', unsafe_allow_html=True)
 
-# ═══════════════════════════
+# ══════════════════════════════════════════
 # TAB 1 — LIVE SCRAPER
-# ═══════════════════════════
+# ══════════════════════════════════════════
 with tab1:
-    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+    st.markdown('<div class="content">', unsafe_allow_html=True)
 
-    # Config + Log side by side
-    col_left, col_right = st.columns([1, 2], gap="large")
+    col_cfg, col_log = st.columns([1, 2], gap="large")
 
-    with col_left:
-        st.markdown('<div class="si-card">', unsafe_allow_html=True)
-        st.markdown('<div class="si-card-head"><span class="si-card-title">Scraper Settings</span><span class="si-pill-blue">ScraperAPI</span></div>', unsafe_allow_html=True)
-        st.markdown('<div class="si-card-body">', unsafe_allow_html=True)
+    with col_cfg:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card-header"><span class="card-title">⚙ Scraper Configuration</span><span class="badge-green">ScraperAPI</span></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-body">', unsafe_allow_html=True)
 
-        pages = st.number_input("Pages to Scrape", min_value=1, max_value=20, value=1,
-                                help="1 page ≈ 10 articles")
+        pages_options = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        pages_label = st.selectbox(
+            "Articles to Scrape",
+            options=pages_options,
+            index=0,
+            format_func=lambda x: f"{x} articles (~{x//10} page{'s' if x//10>1 else ''})",
+            help="Select how many articles to scrape. Each page = ~10 articles."
+        )
+        pages = pages_label // 10  # convert to page count for scraper
+        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+        fetch_full = st.checkbox("Fetch Full Article Body", value=False)
+        scrape_pdfs = st.checkbox("Scrape Article PDFs", value=True,
+                                  help="Find and collect PDF download links from each article page")
+
         st.markdown(f"""
-        <div class="si-config-box" style="margin-top:12px;">
-            <div class="si-config-label">Target</div>
-            <div style="font-size:13px; font-weight:600; color:#009999;">press.siemens.com</div>
-        </div>
-        <div class="si-config-box">
-            <div class="si-config-label">Estimated Articles</div>
-            <div class="si-config-val">{pages * 10}</div>
-            <div class="si-config-sub">from {pages} page(s)</div>
+        <div class="cfg-grid">
+            <div class="cfg-box">
+                <div class="cfg-label">Target Domain</div>
+                <div class="cfg-val sm">press.siemens.com</div>
+            </div>
+            <div class="cfg-box">
+                <div class="cfg-label">Est. Articles</div>
+                <div class="cfg-val">{pages_label}</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        fetch_full = st.checkbox("Fetch Full Article Body", value=False)
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+        run_btn = st.button("▶  Run Scraper")
         st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
-        run_btn = st.button("▶  Run Scraper", key="run_btn")
-        st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+
         if st.session_state.scraped_articles:
             df_e = pd.DataFrame(st.session_state.scraped_articles)
-            st.download_button(
-                "⬇  Export CSV",
+            st.download_button("⬇  Export All Articles (CSV)",
                 data=df_e.to_csv(index=False).encode(),
                 file_name=f"siemens_press_{datetime.now().strftime('%Y%m%d')}.csv",
-                mime="text/csv",
-            )
+                mime="text/csv")
 
         st.markdown('</div></div>', unsafe_allow_html=True)
 
-    with col_right:
-        st.markdown('<div class="si-card" style="height:100%">', unsafe_allow_html=True)
-        st.markdown('<div class="si-card-head"><span class="si-card-title">Scraper Log</span><span class="si-pill-teal">Live Output</span></div>', unsafe_allow_html=True)
-        st.markdown('<div class="si-card-body">', unsafe_allow_html=True)
-
+    with col_log:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card-header"><span class="card-title">⬛ Scraper Log</span><span class="badge-green">Live Output</span></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-body">', unsafe_allow_html=True)
         prog_ph = st.empty()
         log_ph  = st.empty()
 
         def render_log():
             lines = st.session_state.scraper_log
-            html = '<div class="si-terminal">'
+            h = '<div class="terminal">'
             if not lines:
-                html += '<div class="t-dim">[--:--:--] SiDocs AI scraper ready.</div>'
-                html += '<div class="t-dim">[--:--:--] Press ▶ Run Scraper to begin.</div>'
-            for ts, kind, msg in lines:
-                html += f'<div class="t-{kind}">[{ts}] {msg}</div>'
-            html += '</div>'
-            log_ph.markdown(html, unsafe_allow_html=True)
-
+                h += '<div class="t-dim">[--:--:--] SiDocs AI Scraper — Ready.</div>'
+                h += '<div class="t-dim">[--:--:--] Configure settings on the left, then press ▶ Run Scraper.</div>'
+                h += '<div class="t-dim">[--:--:--] Output will stream here in real time...</div>'
+            for ts, k, m in lines:
+                h += f'<div class="t-{k}">[{ts}] {m}</div>'
+            h += '</div>'
+            log_ph.markdown(h, unsafe_allow_html=True)
         render_log()
         st.markdown('</div></div>', unsafe_allow_html=True)
 
-    # Run scraper
+    # Run
     if run_btn:
         st.session_state.scraper_log = []
         st.session_state.scraped_articles = []
-
-        def log(msg, kind="ok"):
-            ts = datetime.now().strftime("%H:%M:%S")
-            st.session_state.scraper_log.append((ts, kind, msg))
+        def log(m, k="ok"):
+            st.session_state.scraper_log.append((datetime.now().strftime("%H:%M:%S"), k, m))
             render_log()
-
         log("Initialising SiDocs AI scraper...", "info")
-        log(f"Target: press.siemens.com  |  Pages: {pages}  |  Full fetch: {fetch_full}", "info")
+        log(f"Target: press.siemens.com  |  Pages: {pages}  |  Full fetch: {fetch_full}  |  PDF scrape: {scrape_pdfs}", "info")
         prog_ph.progress(5)
-
         try:
             sys.path.insert(0, "/mnt/user-data/uploads")
             from scraper import get_press_releases, scrape_article_content
             from summarizer import detect_category
-
             log("Connecting via ScraperAPI proxy...", "info")
-            articles_raw = get_press_releases(max_pages=pages)
+            raw = get_press_releases(max_pages=pages)
             prog_ph.progress(40)
-
-            if not articles_raw:
-                log("No articles returned — check ScraperAPI key in scraper.py", "err")
+            if not raw:
+                log("No articles returned — verify ScraperAPI key in scraper.py", "err")
             else:
-                log(f"Fetched {len(articles_raw)} articles successfully", "ok")
+                log(f"Fetched {len(raw)} articles successfully", "ok")
                 if fetch_full:
-                    log("Fetching full article bodies...", "info")
-                    for i, a in enumerate(articles_raw):
-                        body = scrape_article_content(a["url"])
-                        if body: a["body"] = body
-                        log(f"[{i+1}/{len(articles_raw)}] {a['title'][:55]}...", "ok")
-                        prog_ph.progress(40 + int(40*(i+1)/len(articles_raw)))
+                    for i, a in enumerate(raw):
+                        b = scrape_article_content(a["url"])
+                        if b: a["body"] = b
+                        log(f"  [{i+1}/{len(raw)}] {a['title'][:55]}...", "ok")
+                        prog_ph.progress(40 + int(25*(i+1)/len(raw)))
+
+                # Scrape PDF links
+                if scrape_pdfs:
+                    log("Scraping PDF links from article pages...", "info")
+                    import requests as _req
+                    from bs4 import BeautifulSoup as _BS
+                    import warnings as _w; _w.filterwarnings("ignore")
+                    _HEADERS = {"User-Agent": "Mozilla/5.0"}
+                    def _get_pdf_link(url):
+                        try:
+                            r = _req.get(url, headers=_HEADERS, verify=False, timeout=20)
+                            soup = _BS(r.text, "html.parser")
+                            for a_tag in soup.find_all("a", href=True):
+                                href = a_tag["href"]
+                                txt = a_tag.get_text(strip=True).lower()
+                                if href.lower().endswith(".pdf") or "pdf" in txt:
+                                    if href.startswith("http"):
+                                        return href
+                                    if href.startswith("/"):
+                                        return "https://press.siemens.com" + href
+                        except Exception:
+                            pass
+                        return None
+                    for i, a in enumerate(raw):
+                        pdf_url = _get_pdf_link(a["url"])
+                        a["pdf_url"] = pdf_url or ""
+                        if pdf_url:
+                            log(f"  [{i+1}/{len(raw)}] PDF found: {a['title'][:45]}...", "ok")
+                        else:
+                            log(f"  [{i+1}/{len(raw)}] No PDF: {a['title'][:45]}...", "dim")
+                        prog_ph.progress(65 + int(25*(i+1)/len(raw)))
+                    pdfs_found = sum(1 for a in raw if a.get("pdf_url"))
+                    log(f"PDF scraping complete — {pdfs_found}/{len(raw)} PDFs found", "ok")
+
                 log("Detecting categories...", "info")
-                for a in articles_raw:
+                for a in raw:
                     a["category"] = detect_category(a["title"], a["url"], a.get("body",""))
                 prog_ph.progress(95)
-                st.session_state.scraped_articles = articles_raw
-                cats_found = len(set(a["category"] for a in articles_raw))
-                log(f"Done — {len(articles_raw)} articles ready across {cats_found} categories", "ok")
+                st.session_state.scraped_articles = raw
+                n_cats_f = len(set(a["category"] for a in raw))
+                log(f"Complete — {len(raw)} articles across {n_cats_f} categories", "ok")
                 prog_ph.progress(100)
         except ImportError as e:
             log(f"Import error: {e}", "err")
-            log("Ensure scraper.py and summarizer.py are in the same folder", "warn")
+            log("Ensure scraper.py and summarizer.py are in the same folder as app.py", "warn")
         except Exception as e:
-            log(f"Error: {e}", "err")
+            log(f"Unexpected error: {e}", "err")
         st.rerun()
 
-    # ── Results ──
+    # Results
     if st.session_state.scraped_articles:
-        a2 = st.session_state.scraped_articles
+        a2  = st.session_state.scraped_articles
         vd2 = sorted([d for d in [parse_d(a.get("date","")) for a in a2] if d])
-        mn = vd2[0].strftime("%d %b %Y") if vd2 else "—"
-        mx = vd2[-1].strftime("%d %b %Y") if vd2 else "—"
-        cats2 = len(set(a.get("category","") for a in a2))
+        mn  = vd2[0].strftime("%d %b %Y")  if vd2 else "—"
+        mx  = vd2[-1].strftime("%d %b %Y") if vd2 else "—"
+        c2  = len(set(a.get("category","") for a in a2))
 
-        st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+        st.markdown('<div class="sec-label">Results Overview</div>', unsafe_allow_html=True)
 
-        # Metrics — white cards with dark text
         st.markdown(f"""
-        <div class="si-metrics">
-            <div class="si-metric">
-                <div class="si-metric-val">{len(a2)}</div>
-                <div class="si-metric-lbl">Articles Scraped</div>
+        <div class="kpi-grid">
+            <div class="kpi">
+                <div class="kpi-val">{len(a2)}</div>
+                <div class="kpi-label">Articles Scraped</div>
             </div>
-            <div class="si-metric blue">
-                <div class="si-metric-val">{cats2}</div>
-                <div class="si-metric-lbl">Categories Found</div>
+            <div class="kpi b">
+                <div class="kpi-val">{c2}</div>
+                <div class="kpi-label">Categories Found</div>
             </div>
-            <div class="si-metric teal2">
-                <div class="si-metric-val date">{mn}</div>
-                <div class="si-metric-lbl">Earliest Date</div>
+            <div class="kpi w">
+                <div class="kpi-val dt">{mn}</div>
+                <div class="kpi-label">Earliest Article</div>
             </div>
-            <div class="si-metric green">
-                <div class="si-metric-val date">{mx}</div>
-                <div class="si-metric-lbl">Latest Date</div>
+            <div class="kpi g">
+                <div class="kpi-val dt">{mx}</div>
+                <div class="kpi-label">Latest Article</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Date range banner
         if vd2:
-            span_days = (vd2[-1] - vd2[0]).days
+            s = (vd2[-1]-vd2[0]).days
             st.markdown(f"""
-            <div class="si-date-banner">
-                <div>
-                    <div class="si-date-block-lbl">📅 Earliest Article</div>
-                    <div class="si-date-block-val">{vd2[0].strftime("%d %B %Y")}</div>
+            <div class="date-banner">
+                <div class="db-block">
+                    <div class="db-label">📅 Earliest Article Date</div>
+                    <div class="db-value">{vd2[0].strftime("%d %B %Y")}</div>
                 </div>
-                <div class="si-date-arrow">→</div>
-                <div>
-                    <div class="si-date-block-lbl">📅 Latest Article</div>
-                    <div class="si-date-block-val">{vd2[-1].strftime("%d %B %Y")}</div>
+                <div class="db-arrow">→</div>
+                <div class="db-block">
+                    <div class="db-label">📅 Latest Article Date</div>
+                    <div class="db-value">{vd2[-1].strftime("%d %B %Y")}</div>
                 </div>
-                <div style="border-left:1px solid #dde4ec; padding-left:24px;">
-                    <div class="si-date-block-lbl">Coverage Span</div>
-                    <div class="si-date-block-val accent">{span_days} days</div>
+                <div class="db-block">
+                    <div class="db-label">Coverage Span</div>
+                    <div class="db-value teal">{s} days</div>
                 </div>
-                <div>
-                    <div class="si-date-block-lbl">Dated Articles</div>
-                    <div class="si-date-block-val accent">{len(vd2)} / {len(a2)}</div>
+                <div class="db-block">
+                    <div class="db-label">Articles with Dates</div>
+                    <div class="db-value teal">{len(vd2)} / {len(a2)}</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-        # Article table
-        st.markdown('<div class="si-card">', unsafe_allow_html=True)
-        st.markdown(f'<div class="si-card-head"><span class="si-card-title">Scraped Articles</span><span class="si-pill-teal">{len(a2)} Results</span></div>', unsafe_allow_html=True)
+        st.markdown('<div class="sec-label">Article List</div>', unsafe_allow_html=True)
 
+        # Download All PDFs button
+        all_pdfs = [a for a in a2 if a.get("pdf_url")]
+        if all_pdfs:
+            pdf_links_csv = "\n".join([f"{a.get('title','')[:60]},{a.get('pdf_url','')}" for a in all_pdfs])
+            col_dl1, col_dl2 = st.columns([2,1], gap="medium")
+            with col_dl1:
+                st.markdown(f'<div style="padding:14px 20px;background:rgba(0,255,191,0.06);border:1px solid rgba(0,255,191,0.2);border-left:4px solid #00ffbf;font-size:13px;color:rgba(255,255,255,0.7);"><b style="color:#00ffbf;">{len(all_pdfs)} PDFs found</b> — Download individual PDFs from the table below, or export all links at once.</div>', unsafe_allow_html=True)
+            with col_dl2:
+                st.download_button(
+                    "⬇  Export All PDF Links (CSV)",
+                    data=("Title,PDF URL\n" + pdf_links_csv).encode(),
+                    file_name=f"siemens_pdf_links_{datetime.now().strftime('%Y%m%d')}.csv",
+                    mime="text/csv"
+                )
+
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown(f'<div class="card-header"><span class="card-title">Scraped Articles</span><span class="badge-green">{len(a2)} Results</span></div>', unsafe_allow_html=True)
         rows = ""
         for i, a in enumerate(a2[:60], 1):
             cat = a.get("category","Siemens AG")
-            sty = CAT_STYLE.get(cat, "background:#f1f5f9; color:#334155;")
+            sty = CAT.get(cat, DEF_CAT)
+            pdf_url = a.get("pdf_url", "")
+            pdf_cell = f'<a href="{pdf_url}" target="_blank" style="display:inline-block;padding:4px 10px;background:rgba(0,255,191,0.12);color:#00ffbf;border:1px solid rgba(0,255,191,0.3);font-size:10px;font-weight:700;text-decoration:none;letter-spacing:0.5px;white-space:nowrap;">⬇ PDF</a>' if pdf_url else '<span style="font-size:10px;color:rgba(255,255,255,0.18);">—</span>'
             rows += f"""<tr>
-                <td style="color:#aab; font-weight:600; width:36px;">{i:02d}</td>
-                <td style="color:#007799; white-space:nowrap; font-weight:600; width:130px;">{a.get('date','—')}</td>
-                <td style="font-weight:500; color:#1a2332;">{a.get('title','')[:90]}</td>
-                <td style="width:160px;"><span class="cat-badge" style="{sty}">{cat}</span></td>
+                <td class="td-num">{i:02d}</td>
+                <td class="td-date">{a.get('date','—')}</td>
+                <td class="td-title"><a href="{a.get('url','#')}" target="_blank" style="color:#ffffff;text-decoration:none;font-weight:500;">{a.get('title','')[:80]}</a></td>
+                <td style="width:165px;"><span class="cat-tag" style="{sty}">{cat}</span></td>
+                <td style="width:80px;text-align:center;">{pdf_cell}</td>
             </tr>"""
-
-        st.markdown(f"""
-        <div style="overflow-x:auto;">
-            <table class="si-table">
-                <thead><tr><th>#</th><th>Date</th><th>Title</th><th>Category</th></tr></thead>
-                <tbody>{rows}</tbody>
-            </table>
-        </div>
-        {"<div style='padding:12px 16px;font-size:12px;color:#888;'>Showing 60 of "+str(len(a2))+" — see Article Explorer for full view.</div>" if len(a2)>60 else ""}
-        """, unsafe_allow_html=True)
+        st.markdown(f'<div style="overflow-x:auto;"><table class="si-table"><thead><tr><th>#</th><th>Date</th><th>Title</th><th>Category</th><th>PDF</th></tr></thead><tbody>{rows}</tbody></table></div>', unsafe_allow_html=True)
+        if len(a2) > 60:
+            st.markdown(f'<div style="padding:12px 18px;font-size:12px;color:rgba(255,255,255,0.22);">Showing 60 of {len(a2)} articles — switch to Article Explorer for full view.</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# ═══════════════════════════
+
+# ══════════════════════════════════════════
 # TAB 2 — PDF DATE CHECK
-# ═══════════════════════════
+# ══════════════════════════════════════════
 with tab2:
-    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+    st.markdown('<div class="content">', unsafe_allow_html=True)
 
-    col_up, col_res = st.columns([1, 1], gap="large")
+    col_l2, col_r2 = st.columns([1, 1], gap="large")
 
-    with col_up:
-        st.markdown('<div class="si-card">', unsafe_allow_html=True)
-        st.markdown('<div class="si-card-head"><span class="si-card-title">Upload PDF Report</span><span class="si-pill-teal">Auto-Detect</span></div>', unsafe_allow_html=True)
-        st.markdown('<div class="si-card-body">', unsafe_allow_html=True)
-        st.markdown("""
-        <p style="font-size:13px; color:#4a6070; line-height:1.6; margin-bottom:14px;">
-        Drag and drop a generated Siemens Press Intelligence PDF.<br>
-        The app will automatically extract all dates, detect the coverage window,
-        and verify the article count inside.
-        </p>
-        """, unsafe_allow_html=True)
+    with col_l2:
+        # ── Upload ──
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card-header"><span class="card-title">📄 Upload PDF Report</span><span class="badge-green">Auto-Detect</span></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-body">', unsafe_allow_html=True)
+        st.markdown('<p style="font-size:14px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:20px;">Drag and drop a Siemens Press Intelligence PDF below. The app will automatically extract all dates, detect the full coverage window, and verify article count.</p>', unsafe_allow_html=True)
         uploaded = st.file_uploader("Drop your PDF here or click to browse", type=["pdf"], label_visibility="visible")
         st.markdown('</div></div>', unsafe_allow_html=True)
 
-        # Also show date range picker for manual filter
-        st.markdown('<div class="si-card">', unsafe_allow_html=True)
-        st.markdown('<div class="si-card-head"><span class="si-card-title">Manual Date Range Filter</span><span class="si-pill-blue">Optional</span></div>', unsafe_allow_html=True)
-        st.markdown('<div class="si-card-body">', unsafe_allow_html=True)
-        st.markdown('<p style="font-size:12px;color:#7a8a99;margin-bottom:12px;">Filter scraped articles by selecting a custom date range below.</p>', unsafe_allow_html=True)
-        pdf_filter_start = st.date_input("From Date", value=date(2024,1,1), key="pdf_fs")
-        pdf_filter_end   = st.date_input("To Date",   value=date.today(),   key="pdf_fe")
+        # ── Date range filter ──
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card-header"><span class="card-title">📅 Date Range Filter</span><span class="badge-grey">Optional</span></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-body">', unsafe_allow_html=True)
+        st.markdown('<p style="font-size:13px;color:rgba(255,255,255,0.38);line-height:1.7;margin-bottom:20px;">Select a custom date range to filter articles that were loaded from the Live Scraper.</p>', unsafe_allow_html=True)
+        dc1, dc2 = st.columns(2, gap="medium")
+        with dc1: pdf_fs = st.date_input("From Date", value=date(2024,1,1), key="pdf_fs")
+        with dc2: pdf_fe = st.date_input("To Date",   value=date.today(),   key="pdf_fe")
 
         if st.session_state.scraped_articles:
-            filtered_for_pdf = [
-                a for a in st.session_state.scraped_articles
-                if (lambda d: d and pdf_filter_start <= d <= pdf_filter_end)(parse_d(a.get("date","")))
-            ]
+            filt = [a for a in st.session_state.scraped_articles
+                    if (lambda d: d and pdf_fs<=d<=pdf_fe)(parse_d(a.get("date","")))]
+            fvd = sorted([d for d in [parse_d(a.get("date","")) for a in filt] if d])
+            span_txt = f"{fvd[0].strftime('%d %b %Y')} → {fvd[-1].strftime('%d %b %Y')}" if fvd else "—"
             st.markdown(f"""
-            <div style="background:#f0fafa; border:1px solid #b3e0e0; border-radius:8px;
-                        padding:14px 16px; margin-top:12px; color:#004444;">
-                <strong style="color:#002244;">{len(filtered_for_pdf)}</strong>
-                <span style="font-size:13px;"> articles in this date range</span>
+            <div class="info-box" style="margin-top:16px;">
+                <div class="info-box-num">{len(filt)}</div>
+                <div class="info-box-txt">
+                    <strong>Articles in Range</strong>
+                    {span_txt}
+                </div>
             </div>
             """, unsafe_allow_html=True)
-            if filtered_for_pdf:
-                df_filtered = pd.DataFrame(filtered_for_pdf)
-                st.download_button(
-                    "⬇  Export Filtered CSV",
-                    data=df_filtered.to_csv(index=False).encode(),
-                    file_name=f"filtered_{pdf_filter_start}_{pdf_filter_end}.csv",
-                    mime="text/csv",
-                )
+            if filt:
+                st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+                st.download_button("⬇  Export Filtered CSV",
+                    data=pd.DataFrame(filt).to_csv(index=False).encode(),
+                    file_name=f"filtered_{pdf_fs}_{pdf_fe}.csv", mime="text/csv")
+        else:
+            st.markdown('<div style="margin-top:16px;padding:16px 20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);"><span style="font-size:12px;color:rgba(255,255,255,0.22);">Run the Live Scraper first to enable date filtering.</span></div>', unsafe_allow_html=True)
+
         st.markdown('</div></div>', unsafe_allow_html=True)
 
-    with col_res:
+    with col_r2:
         if uploaded:
             pdf_bytes = uploaded.read()
             text = ""
@@ -672,188 +953,195 @@ with tab2:
             found = []
             for p in pats: found.extend(re.findall(p, text, re.IGNORECASE))
 
-            def try_parse(d):
+            def tp(d):
                 for fmt in ["%d %B %Y","%B %d %Y","%B %d, %Y","%d %b %Y","%Y-%m-%d"]:
                     try: return datetime.strptime(d.strip(), fmt).date()
                     except: pass
                 return None
 
-            pdates = sorted(set(filter(None, [try_parse(d) for d in found])))
+            pdates    = sorted(set(filter(None,[tp(d) for d in found])))
             art_count = len(re.findall(r'^\d{2}\s+', text, re.MULTILINE))
 
             if pdates:
                 mn2, mx2 = min(pdates), max(pdates)
-                span2 = (mx2 - mn2).days
-
-                st.markdown('<div class="si-card">', unsafe_allow_html=True)
-                st.markdown('<div class="si-card-head"><span class="si-card-title">PDF Analysis Result</span><span class="si-pill-teal">✓ Dates Found</span></div>', unsafe_allow_html=True)
+                s2 = (mx2-mn2).days
+                st.markdown('<div class="card">', unsafe_allow_html=True)
+                st.markdown('<div class="card-header"><span class="card-title">✅ PDF Analysis Result</span><span class="badge-green">Dates Detected</span></div>', unsafe_allow_html=True)
                 st.markdown(f"""
-                <div class="si-card-body">
-                    <div class="si-date-banner" style="margin-bottom:16px; flex-direction:column; align-items:flex-start; gap:14px;">
-                        <div style="display:flex; gap:32px; align-items:center; width:100%;">
-                            <div>
-                                <div class="si-date-block-lbl">📅 Earliest Date in PDF</div>
-                                <div class="si-date-block-val" style="font-size:20px;">{mn2.strftime("%d %B %Y")}</div>
+                <div class="card-body">
+                    <div class="date-banner" style="flex-direction:column;align-items:flex-start;gap:20px;margin-bottom:24px;">
+                        <div style="display:flex;gap:20px;align-items:center;width:100%;">
+                            <div class="db-block">
+                                <div class="db-label">📅 Earliest Date in PDF</div>
+                                <div class="db-value" style="font-size:22px;">{mn2.strftime("%d %B %Y")}</div>
                             </div>
-                            <div class="si-date-arrow" style="font-size:28px;">→</div>
-                            <div>
-                                <div class="si-date-block-lbl">📅 Latest Date in PDF</div>
-                                <div class="si-date-block-val" style="font-size:20px;">{mx2.strftime("%d %B %Y")}</div>
+                            <div class="db-arrow" style="font-size:28px; margin: 0 6px;">→</div>
+                            <div class="db-block">
+                                <div class="db-label">📅 Latest Date in PDF</div>
+                                <div class="db-value" style="font-size:22px;">{mx2.strftime("%d %B %Y")}</div>
                             </div>
                         </div>
-                        <div style="display:flex; gap:32px; padding-top:10px; border-top:1px solid #eef2f6; width:100%;">
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%;
+                                    padding-top:16px;border-top:1px solid rgba(255,255,255,0.07);">
                             <div>
-                                <div class="si-date-block-lbl">Coverage Span</div>
-                                <div class="si-date-block-val accent">{span2} days</div>
+                                <div class="db-label">Span</div>
+                                <div class="db-value teal">{s2} days</div>
                             </div>
                             <div>
-                                <div class="si-date-block-lbl">Unique Dates</div>
-                                <div class="si-date-block-val accent">{len(pdates)}</div>
+                                <div class="db-label">Unique Dates</div>
+                                <div class="db-value teal">{len(pdates)}</div>
                             </div>
                             <div>
-                                <div class="si-date-block-lbl">Articles Detected</div>
-                                <div class="si-date-block-val accent">{art_count if art_count else "—"}</div>
+                                <div class="db-label">Articles Est.</div>
+                                <div class="db-value teal">{art_count if art_count else '—'}</div>
                             </div>
                             <div>
-                                <div class="si-date-block-lbl">File Size</div>
-                                <div class="si-date-block-val">{round(len(pdf_bytes)/1024)} KB</div>
+                                <div class="db-label">File Size</div>
+                                <div class="db-value">{round(len(pdf_bytes)/1024)} KB</div>
                             </div>
                         </div>
                     </div>
+                    <div class="sec-label" style="margin-top:0; margin-bottom:12px;">All Dates Detected</div>
                 """, unsafe_allow_html=True)
-
-                # All dates table
-                st.markdown('<div class="si-card-head" style="margin:0 -1px;"><span class="si-card-title">All Dates Found in PDF</span></div>', unsafe_allow_html=True)
                 date_rows = "".join(
-                    f'<tr><td style="color:#aab;width:36px;">{i:02d}</td>'
-                    f'<td style="font-weight:600;color:#002244;">{d.strftime("%d %B %Y")}</td>'
-                    f'<td style="color:#7a8a99;">{d.strftime("%A")}</td>'
-                    f'<td style="color:#009999;">{d.strftime("%Y")}</td></tr>'
+                    f'<tr>'
+                    f'<td class="td-num">{i:02d}</td>'
+                    f'<td style="font-weight:700;color:#ffffff;font-size:14px;">{d.strftime("%d %B %Y")}</td>'
+                    f'<td style="color:rgba(255,255,255,0.35);font-size:13px;">{d.strftime("%A")}</td>'
+                    f'<td style="color:#00ffbf;font-weight:700;font-size:13px;">{d.strftime("%Y")}</td>'
+                    f'</tr>'
                     for i,d in enumerate(pdates,1)
                 )
-                st.markdown(f"""
-                <div style="overflow-x:auto; max-height:320px; overflow-y:auto;">
-                    <table class="si-table">
-                        <thead><tr><th>#</th><th>Date</th><th>Day</th><th>Year</th></tr></thead>
-                        <tbody>{date_rows}</tbody>
-                    </table>
-                </div>
-                </div></div>
-                """, unsafe_allow_html=True)
+                st.markdown(f'<div style="overflow-y:auto;max-height:320px;"><table class="si-table"><thead><tr><th>#</th><th>Full Date</th><th>Day of Week</th><th>Year</th></tr></thead><tbody>{date_rows}</tbody></table></div></div></div>', unsafe_allow_html=True)
             else:
                 st.markdown("""
-                <div style="background:#fffbeb; border:1.5px solid #f59e0b; border-radius:10px;
-                            padding:20px 24px; color:#78350f;">
-                    <strong>⚠ No dates detected</strong><br>
-                    <span style="font-size:13px;">The PDF may be image-based (scanned) or use a non-standard date format.</span>
+                <div class="warn-box" style="margin-top:0;">
+                    <div class="warn-box-title">⚠ No Dates Detected</div>
+                    <div class="warn-box-body">
+                        This PDF may be image-based (scanned) and requires OCR processing,
+                        or it uses a non-standard date format not recognised by the parser.
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div class="si-card" style="padding:60px 40px; text-align:center;">
-                <div style="font-size:48px; margin-bottom:14px;">📄</div>
-                <div style="font-size:16px; font-weight:700; color:#002244; margin-bottom:6px;">No PDF uploaded yet</div>
-                <div style="font-size:13px; color:#7a8a99;">Upload a PDF on the left to see date range analysis here</div>
+            <div class="empty-state">
+                <div class="empty-icon">📄</div>
+                <div class="empty-title">No PDF Uploaded Yet</div>
+                <div class="empty-sub">Upload a Siemens Press Intelligence PDF on the left to see full date range analysis and article count here.</div>
             </div>
             """, unsafe_allow_html=True)
 
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# ═══════════════════════════
+
+# ══════════════════════════════════════════
 # TAB 3 — ARTICLE EXPLORER
-# ═══════════════════════════
+# ══════════════════════════════════════════
 with tab3:
-    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+    st.markdown('<div class="content">', unsafe_allow_html=True)
     all_arts = st.session_state.scraped_articles
 
     if not all_arts:
         st.markdown("""
-        <div class="si-card" style="padding:80px 40px; text-align:center;">
-            <div style="font-size:48px; margin-bottom:14px;">🌐</div>
-            <div style="font-size:16px; font-weight:700; color:#002244; margin-bottom:8px;">No articles loaded</div>
-            <div style="font-size:13px; color:#7a8a99;">Run the Live Scraper in Tab 1 first</div>
+        <div class="empty-state">
+            <div class="empty-icon">🌐</div>
+            <div class="empty-title">No Articles Loaded</div>
+            <div class="empty-sub">Run the Live Scraper in Tab 1 first to populate this explorer with articles.</div>
         </div>
         """, unsafe_allow_html=True)
     else:
-        # Filter bar
-        st.markdown('<div class="si-filter-row">', unsafe_allow_html=True)
-        fc1, fc2, fc3, fc4 = st.columns([1,1,1,1])
-        with fc1:
-            f_start = st.date_input("From Date", value=date(2024,1,1), key="ex_fs")
-        with fc2:
-            f_end = st.date_input("To Date", value=date.today(), key="ex_fe")
+        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
+        st.markdown('<div class="filter-title">🔍 Filter & Search Articles</div>', unsafe_allow_html=True)
+        fc1, fc2, fc3, fc4 = st.columns([1,1,1,1], gap="medium")
+        with fc1: f_s = st.date_input("From Date", value=date(2024,1,1), key="ex_fs")
+        with fc2: f_e = st.date_input("To Date",   value=date.today(),   key="ex_fe")
         with fc3:
-            cats_opts = ["All"] + sorted(set(a.get("category","") for a in all_arts))
-            sel_cat = st.selectbox("Category", cats_opts)
-        with fc4:
-            srch = st.text_input("Search Title", placeholder="Type keyword...", key="ex_srch")
+            c_opts = ["All Categories"] + sorted(set(a.get("category","") for a in all_arts))
+            sel_c  = st.selectbox("Category", c_opts)
+        with fc4: srch = st.text_input("Search Title", placeholder="e.g. digital twin...", key="srch")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # Apply
-        filtered = []
-        for a in all_arts:
-            d = parse_d(a.get("date",""))
-            if d and not (f_start <= d <= f_end): continue
-            if sel_cat != "All" and a.get("category") != sel_cat: continue
-            if srch and srch.lower() not in a.get("title","").lower(): continue
-            filtered.append(a)
+        filtered = [
+            a for a in all_arts
+            if (lambda d: not d or (f_s<=d<=f_e))(parse_d(a.get("date","")))
+            and (sel_c in ["All Categories","All"] or a.get("category")==sel_c)
+            and (not srch or srch.lower() in a.get("title","").lower())
+        ]
+        fvd3 = sorted([d for d in [parse_d(a.get("date","")) for a in filtered] if d])
+        f_mn3 = fvd3[0].strftime("%d %b %Y")  if fvd3 else "—"
+        f_mx3 = fvd3[-1].strftime("%d %b %Y") if fvd3 else "—"
 
-        # Summary stats
-        fvd = sorted([d for d in [parse_d(a.get("date","")) for a in filtered] if d])
-        f_mn = fvd[0].strftime("%d %b %Y") if fvd else "—"
-        f_mx = fvd[-1].strftime("%d %b %Y") if fvd else "—"
-
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.markdown(f"""<div class="si-metric"><div class="si-metric-val">{len(filtered)}</div><div class="si-metric-lbl">Matching Articles</div></div>""", unsafe_allow_html=True)
-        with c2:
-            st.markdown(f"""<div class="si-metric teal2"><div class="si-metric-val date">{f_mn}</div><div class="si-metric-lbl">Earliest in Filter</div></div>""", unsafe_allow_html=True)
-        with c3:
-            st.markdown(f"""<div class="si-metric green"><div class="si-metric-val date">{f_mx}</div><div class="si-metric-lbl">Latest in Filter</div></div>""", unsafe_allow_html=True)
+        c1, c2, c3 = st.columns(3, gap="medium")
+        with c1: st.markdown(f'<div class="kpi"><div class="kpi-val">{len(filtered)}</div><div class="kpi-label">Matching Articles</div></div>', unsafe_allow_html=True)
+        with c2: st.markdown(f'<div class="kpi w"><div class="kpi-val dt">{f_mn3}</div><div class="kpi-label">Earliest in Filter</div></div>', unsafe_allow_html=True)
+        with c3: st.markdown(f'<div class="kpi g"><div class="kpi-val dt">{f_mx3}</div><div class="kpi-label">Latest in Filter</div></div>', unsafe_allow_html=True)
 
         st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
         if filtered:
-            st.markdown('<div class="si-card">', unsafe_allow_html=True)
-            st.markdown(f'<div class="si-card-head"><span class="si-card-title">Filtered Results</span><span class="si-pill-teal">{len(filtered)} Articles</span></div>', unsafe_allow_html=True)
-
+            st.markdown('<div class="sec-label">Filtered Results</div>', unsafe_allow_html=True)
             rows = ""
             for i, a in enumerate(filtered, 1):
-                cat = a.get("category","Siemens AG")
-                sty = CAT_STYLE.get(cat, "background:#f1f5f9; color:#334155;")
+                cat  = a.get("category","Siemens AG")
+                sty  = CAT.get(cat, DEF_CAT)
                 snip = (a.get("body","") or a.get("summary",""))[:90]
                 url  = a.get("url","#")
+                pdf_url = a.get("pdf_url","")
+                snip_html = f'<div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;">{snip}{"..." if len(snip)==90 else ""}</div>' if snip else ""
+                pdf_cell = f'<a href="{pdf_url}" target="_blank" style="display:inline-block;padding:4px 10px;background:rgba(0,255,191,0.12);color:#00ffbf;border:1px solid rgba(0,255,191,0.3);font-size:10px;font-weight:700;text-decoration:none;letter-spacing:0.5px;white-space:nowrap;">⬇ PDF</a>' if pdf_url else '<span style="font-size:10px;color:rgba(255,255,255,0.18);">—</span>'
                 rows += f"""<tr>
-                    <td style="color:#aab;width:36px;">{i:02d}</td>
-                    <td style="color:#007799;white-space:nowrap;font-weight:600;width:130px;">{a.get('date','—')}</td>
-                    <td>
-                        <a href="{url}" target="_blank" style="color:#002244;font-weight:600;text-decoration:none;">{a.get('title','')[:85]}</a>
-                        <div style="font-size:11px;color:#9aacbb;margin-top:2px;">{snip}{'...' if len(snip)==90 else ''}</div>
+                    <td style="padding:14px 18px;font-size:11px;color:rgba(255,255,255,0.3);width:40px;border-bottom:1px solid rgba(255,255,255,0.045);">{i:02d}</td>
+                    <td style="padding:14px 18px;font-size:13px;color:#00ffbf;font-weight:600;white-space:nowrap;width:130px;border-bottom:1px solid rgba(255,255,255,0.045);">{a.get('date','&#8212;')}</td>
+                    <td style="padding:14px 18px;font-size:13px;color:#ffffff;border-bottom:1px solid rgba(255,255,255,0.045);">
+                        <a href="{url}" target="_blank" style="color:#ffffff;font-weight:600;font-size:13px;text-decoration:none;line-height:1.4;">{a.get('title','')[:88]}</a>
+                        {snip_html}
                     </td>
-                    <td style="width:165px;"><span class="cat-badge" style="{sty}">{cat}</span></td>
+                    <td style="padding:14px 18px;width:165px;border-bottom:1px solid rgba(255,255,255,0.045);"><span style="display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:0.4px;white-space:nowrap;{sty}">{cat}</span></td>
+                    <td style="padding:14px 18px;width:80px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.045);">{pdf_cell}</td>
                 </tr>"""
 
-            st.markdown(f"""
-            <div style="overflow-x:auto;">
-                <table class="si-table">
-                    <thead><tr><th>#</th><th>Date</th><th>Title</th><th>Category</th></tr></thead>
-                    <tbody>{rows}</tbody>
-                </table>
-            </div>
-            """, unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            table_html = f"""<!DOCTYPE html>
+<html><head><style>
+body {{ margin:0; padding:0; background:#000028; font-family:'Segoe UI',sans-serif; }}
+table {{ width:100%; border-collapse:collapse; background:#000028; }}
+thead tr {{ background:rgba(255,255,255,0.02); }}
+th {{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px;
+      color:rgba(255,255,255,0.6); padding:12px 18px; text-align:left;
+      border-bottom:1px solid rgba(255,255,255,0.1); }}
+tr:hover td {{ background:rgba(0,255,191,0.04); }}
+.header-bar {{ padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.07);
+               background:rgba(255,255,255,0.025); display:flex; align-items:center;
+               justify-content:space-between; }}
+.card-title {{ font-size:14px; font-weight:700; color:#ffffff; }}
+.badge {{ display:inline-block; background:rgba(0,255,191,0.1); color:#00ffbf;
+          border:1px solid rgba(0,255,191,0.25); font-size:10px; font-weight:700;
+          padding:3px 12px; letter-spacing:1.2px; text-transform:uppercase; }}
+.wrap {{ border:1px solid rgba(255,255,255,0.09); background:rgba(255,255,255,0.04); overflow:hidden; }}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="header-bar">
+    <span class="card-title">Articles</span>
+    <span class="badge">{len(filtered)} Results</span>
+  </div>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>#</th><th>Date</th><th>Title</th><th>Category</th><th>PDF</th></tr></thead>
+      <tbody>{rows}</tbody>
+    </table>
+  </div>
+</div>
+</body></html>"""
 
-            df_f = pd.DataFrame(filtered)
-            st.download_button(
-                "⬇  Export Filtered Articles (CSV)",
-                data=df_f.to_csv(index=False).encode(),
-                file_name=f"filtered_{f_start}_{f_end}.csv",
-                mime="text/csv",
-            )
+            import streamlit.components.v1 as components
+            components.html(table_html, height=min(90 + len(filtered) * 62, 700), scrolling=True)
+
+            st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+            st.download_button("⬇  Export Filtered Articles (CSV)",
+                data=pd.DataFrame(filtered).to_csv(index=False).encode(),
+                file_name=f"filtered_{f_s}_{f_e}.csv", mime="text/csv")
         else:
-            st.markdown("""
-            <div class="si-card" style="padding:40px; text-align:center; color:#7a8a99; font-size:14px;">
-                No articles match the current filters. Try adjusting the date range or category.
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown('<div style="padding:60px;text-align:center;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);"><div style="font-size:14px;color:rgba(255,255,255,0.28);">No articles match the current filters.<br>Try adjusting the date range, category or search term.</div></div>', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
