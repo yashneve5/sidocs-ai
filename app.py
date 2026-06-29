@@ -91,127 +91,100 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 .subnav-item.active { color: #ffffff; border-bottom-color: #00ffbf; font-weight: 600; }
 
 /* ══════════════════════════════════════════
-   HERO — Siemens geometric teal arrows bg
+   HERO — full-width Siemens.com hero section
 ══════════════════════════════════════════ */
 .hero {
     background: #000028;
-    padding: 36px 60px 28px 60px;
+    padding: 80px 60px 70px 60px;
     position: relative; overflow: hidden;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    min-height: 380px;
+    display: flex; flex-direction: column; justify-content: center;
 }
-/* Large teal chevron — back layer */
 .hero::before {
     content: '';
-    position: absolute;
-    top: -30px; right: -80px;
-    width: 0; height: 0;
-    border-top: 240px solid transparent;
-    border-bottom: 240px solid transparent;
-    border-left: 200px solid #00ffbf;
-    opacity: 0.9;
+    position: absolute; top: -120px; right: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(ellipse, rgba(0,160,140,0.13) 0%, transparent 65%);
     pointer-events: none;
 }
-/* Large teal chevron — front layer (offset to create double-arrow look) */
 .hero::after {
     content: '';
-    position: absolute;
-    top: -30px; right: 80px;
-    width: 0; height: 0;
-    border-top: 240px solid transparent;
-    border-bottom: 240px solid transparent;
-    border-left: 200px solid #00ffbf;
-    opacity: 0.45;
-    pointer-events: none;
-}
-/* Third chevron via a pseudo on .hero-bg */
-.hero-bg-arrow {
-    position: absolute;
-    top: -30px; right: 240px;
-    width: 0; height: 0;
-    border-top: 240px solid transparent;
-    border-bottom: 240px solid transparent;
-    border-left: 200px solid #00ffbf;
-    opacity: 0.18;
+    position: absolute; bottom: -100px; left: 45%;
+    width: 500px; height: 500px;
+    background: radial-gradient(ellipse, rgba(0,40,120,0.1) 0%, transparent 65%);
     pointer-events: none;
 }
 .hero-kicker {
-    font-size: 10px; font-weight: 700; letter-spacing: 3px;
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
     text-transform: uppercase; color: #00ccaa;
-    margin-bottom: 10px; position: relative; z-index: 2;
+    margin-bottom: 20px;
 }
 .hero-title {
-    font-size: 36px; font-weight: 800; color: #ffffff;
-    line-height: 1.15; margin-bottom: 10px;
-    max-width: 680px; letter-spacing: -0.5px;
-    position: relative; z-index: 2;
+    font-size: 52px; font-weight: 800; color: #ffffff;
+    line-height: 1.1; margin-bottom: 22px;
+    max-width: 720px; letter-spacing: -0.5px;
 }
 .hero-title em { color: #00ffbf; font-style: normal; }
 .hero-body {
-    font-size: 14px; color: rgba(255,255,255,0.5);
-    line-height: 1.7; max-width: 540px;
-    font-weight: 300; margin-bottom: 0;
-    position: relative; z-index: 2;
+    font-size: 17px; color: rgba(255,255,255,0.55);
+    line-height: 1.8; max-width: 560px;
+    font-weight: 300; margin-bottom: 44px;
 }
+.hero-cta {
+    display: inline-block;
+    background: #00ffbf; color: #000028;
+    font-size: 15px; font-weight: 700;
+    padding: 15px 36px; cursor: pointer;
+    letter-spacing: 0.4px;
+    border: none; outline: none;
+    text-decoration: none;
+}
+.hero-cta:hover { background: #00e6aa; }
 .hero-stats {
-    display: flex; gap: 48px;
-    margin-top: 24px; padding-top: 20px;
+    display: flex; gap: 60px;
+    margin-top: 60px; padding-top: 40px;
     border-top: 1px solid rgba(255,255,255,0.07);
-    align-items: center;
-    position: relative; z-index: 2;
 }
 .hs-val {
-    font-size: 34px; font-weight: 900; color: #00ffbf;
+    font-size: 40px; font-weight: 900; color: #00ffbf;
     line-height: 1; letter-spacing: -1px;
 }
-.hs-val.md { font-size: 17px; font-weight: 700; padding-top: 5px; color: #ffffff; letter-spacing: 0; }
+.hs-val.md { font-size: 20px; font-weight: 700; padding-top: 8px; color: #ffffff; }
 .hs-label {
-    font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.3);
-    text-transform: uppercase; letter-spacing: 1.8px; margin-top: 5px;
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.32);
+    text-transform: uppercase; letter-spacing: 1.8px; margin-top: 7px;
 }
 
 /* ══════════════════════════════════════════
    CONTENT AREA
 ══════════════════════════════════════════ */
-.content { background: #000028; padding: 28px 60px 60px 60px; }
+.content { background: #000028; padding: 44px 60px 80px 60px; }
 
 /* ══════════════════════════════════════════
-   TABS — Siemens CTA button style
+   TABS — Siemens.com tab style
 ══════════════════════════════════════════ */
 .stTabs [data-baseweb="tab-list"] {
-    background: #000028 !important;
-    border-bottom: none !important;
-    gap: 16px !important;
-    padding: 20px 60px !important;
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    gap: 0 !important; padding: 0 !important;
     margin: 0 !important;
-    box-shadow: none !important;
-    align-items: center !important;
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent !important;
-    color: #00ffbf !important;
-    font-weight: 700 !important; font-size: 13px !important;
-    padding: 14px 32px !important;
-    border: 2px solid #00ffbf !important;
-    border-bottom: 2px solid #00ffbf !important;
-    margin-bottom: 0 !important;
-    letter-spacing: 0.5px !important;
-    text-transform: none !important;
-    transition: all 0.18s !important;
-    border-radius: 0 !important;
+    color: rgba(255,255,255,0.45) !important;
+    font-weight: 500 !important; font-size: 14px !important;
+    padding: 16px 32px !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    margin-bottom: -1px !important;
+    letter-spacing: 0.1px !important;
+    transition: all 0.2s !important;
 }
-.stTabs [data-baseweb="tab"]:hover {
-    background: rgba(0,255,191,0.1) !important;
-    color: #ffffff !important;
-    border-color: #00ffbf !important;
-}
+.stTabs [data-baseweb="tab"]:hover { color: rgba(255,255,255,0.8) !important; }
 .stTabs [aria-selected="true"] {
-    color: #000028 !important;
-    font-weight: 800 !important;
-    background: #00ffbf !important;
-    border: 2px solid #00ffbf !important;
-    border-bottom: 2px solid #00ffbf !important;
-    letter-spacing: 0.5px !important;
-    text-shadow: none !important;
+    color: #ffffff !important; font-weight: 700 !important;
+    border-bottom: 3px solid #00ffbf !important;
 }
 .stTabs [data-baseweb="tab-panel"] {
     background: transparent !important; padding: 0 !important;
@@ -474,32 +447,10 @@ label,
 /* Kill the white calendar popup */
 [data-baseweb="popover"] { background: #000a38 !important; }
 [data-baseweb="calendar"] { background: #000a38 !important; border: 1px solid rgba(0,255,191,0.18) !important; }
-[data-baseweb="calendar"] * { color: #ffffff !important; background: transparent !important; }
+[data-baseweb="calendar"] * { color: #ffffff !important; }
 [data-baseweb="calendar"] button { background: transparent !important; color: #ffffff !important; border: none !important; }
 [data-baseweb="calendar"] [aria-selected="true"] { background: #00ffbf !important; color: #000028 !important; }
-[data-baseweb="calendar"] [aria-selected="true"] * { color: #000028 !important; }
 [data-baseweb="calendar"] [data-testid="day"]:hover { background: rgba(0,255,191,0.15) !important; }
-[data-baseweb="calendar"] [data-testid="day"] { color: #ffffff !important; }
-[data-baseweb="calendar"] abbr { color: rgba(255,255,255,0.45) !important; text-decoration: none !important; }
-[data-baseweb="calendar"] select,
-[data-baseweb="calendar"] option { background: #000a38 !important; color: #ffffff !important; }
-/* Month/Year header buttons */
-[data-baseweb="calendar"] [aria-label*="month"],
-[data-baseweb="calendar"] [aria-label*="year"],
-[data-baseweb="calendar"] [aria-label*="previous"],
-[data-baseweb="calendar"] [aria-label*="next"] { color: #ffffff !important; background: transparent !important; }
-/* Day-of-week header row */
-[data-baseweb="calendar"] [role="columnheader"] { color: rgba(255,255,255,0.4) !important; }
-/* Today highlight */
-[data-baseweb="calendar"] [aria-label*="today"] { border: 1px solid rgba(0,255,191,0.5) !important; }
-/* Date input text box itself */
-[data-testid="stDateInput"] input,
-div[data-baseweb="input"] input[type="text"] {
-    background: rgba(255,255,255,0.07) !important;
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-    border-color: rgba(255,255,255,0.16) !important;
-}
 
 /* Number input */
 .stNumberInput input {
@@ -641,16 +592,16 @@ st.markdown(f"""
 # ══════════════════════════════════════════
 st.markdown(f"""
 <div class="hero">
-    <div class="hero-bg-arrow"></div>
     <div class="hero-kicker">Siemens · Internal Platform · Press Intelligence</div>
     <div class="hero-title">
-        Siemens <em>Press Intelligence</em> Platform
+        Building the intelligence layer<br>for <em>Siemens Press</em>
     </div>
     <div class="hero-body">
         Scrape, analyse and explore Siemens global press releases by date range.
         Upload PDFs for instant date analysis — or run the live scraper to surface
         the latest news across all business units.
     </div>
+    <a class="hero-cta">Get started ↓</a>
     <div class="hero-stats">
         <div>
             <div class="hs-val">{n_a}</div>
@@ -671,11 +622,11 @@ st.markdown(f"""
 # ══════════════════════════════════════════
 # TABS
 # ══════════════════════════════════════════
-st.markdown('<div style="background:#000028; padding: 0;">', unsafe_allow_html=True)
+st.markdown('<div style="background:#000028; padding: 0 60px; border-bottom:1px solid rgba(255,255,255,0.06);">', unsafe_allow_html=True)
 tab1, tab2, tab3 = st.tabs([
     "  🌐  Live Scraper  ",
     "  📄  PDF Upload & Date Check  ",
-    "  🗂  Article Browser  ",
+    "  📊  Article Explorer  ",
 ])
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -689,7 +640,7 @@ with tab1:
 
     with col_cfg:
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="card-header"><span class="card-title">⚙ Scraper Configuration</span><span class="badge-green">ScraperAPI</span></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-header"><span class="card-title">⚙ Scraper Configuration</span><span class="badge-green">Direct</span></div>', unsafe_allow_html=True)
         st.markdown('<div class="card-body">', unsafe_allow_html=True)
 
         pages_options = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -764,14 +715,24 @@ with tab1:
         log(f"Target: press.siemens.com  |  Pages: {pages}  |  Full fetch: {fetch_full}  |  PDF scrape: {scrape_pdfs}", "info")
         prog_ph.progress(5)
         try:
-            sys.path.insert(0, "/mnt/user-data/uploads")
+            import os, importlib
+            # Load scraper.py from the SAME folder as app.py (not uploads)
+            _app_dir = os.path.dirname(os.path.abspath(__file__))
+            if _app_dir not in sys.path:
+                sys.path.insert(0, _app_dir)
+            # Force reload so latest scraper.py is always used
+            if "scraper" in sys.modules:
+                importlib.reload(sys.modules["scraper"])
+            if "summarizer" in sys.modules:
+                importlib.reload(sys.modules["summarizer"])
             from scraper import get_press_releases, scrape_article_content
             from summarizer import detect_category
-            log("Connecting via ScraperAPI proxy...", "info")
+            log("Connecting to press.siemens.com (direct — no proxy)...", "info")
             raw = get_press_releases(max_pages=pages)
             prog_ph.progress(40)
             if not raw:
-                log("No articles returned — verify ScraperAPI key in scraper.py", "err")
+                log("No articles returned — site may be blocking requests or page structure changed.", "err")
+                log("Try: (1) Check your internet connection  (2) Enable debug mode in scraper.py", "warn")
             else:
                 log(f"Fetched {len(raw)} articles successfully", "ok")
                 if fetch_full:
@@ -886,71 +847,20 @@ with tab1:
 
         st.markdown('<div class="sec-label">Article List</div>', unsafe_allow_html=True)
 
-        # Download All PDFs merged into one
+        # Download All PDFs button
         all_pdfs = [a for a in a2 if a.get("pdf_url")]
         if all_pdfs:
-            st.markdown(f'<div style="padding:14px 20px;background:rgba(0,255,191,0.06);border:1px solid rgba(0,255,191,0.2);border-left:4px solid #00ffbf;font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:12px;"><b style="color:#00ffbf;">{len(all_pdfs)} PDFs found</b> — Download individual PDFs from the table below, or merge all into one combined PDF.</div>', unsafe_allow_html=True)
-
-            col_dl1, col_dl2 = st.columns([1,1], gap="medium")
+            pdf_links_csv = "\n".join([f"{a.get('title','')[:60]},{a.get('pdf_url','')}" for a in all_pdfs])
+            col_dl1, col_dl2 = st.columns([2,1], gap="medium")
             with col_dl1:
+                st.markdown(f'<div style="padding:14px 20px;background:rgba(0,255,191,0.06);border:1px solid rgba(0,255,191,0.2);border-left:4px solid #00ffbf;font-size:13px;color:rgba(255,255,255,0.7);"><b style="color:#00ffbf;">{len(all_pdfs)} PDFs found</b> — Download individual PDFs from the table below, or export all links at once.</div>', unsafe_allow_html=True)
+            with col_dl2:
                 st.download_button(
                     "⬇  Export All PDF Links (CSV)",
-                    data=("Title,PDF URL\n" + "\n".join([f"\"{a.get('title','')[:60]}\",{a.get('pdf_url','')}" for a in all_pdfs])).encode(),
+                    data=("Title,PDF URL\n" + pdf_links_csv).encode(),
                     file_name=f"siemens_pdf_links_{datetime.now().strftime('%Y%m%d')}.csv",
                     mime="text/csv"
                 )
-            with col_dl2:
-                merge_btn = st.button("📎  Merge All PDFs into One File", key="merge_pdfs_btn")
-
-            if merge_btn:
-                import requests as _req2
-                try:
-                    from PyPDF2 import PdfMerger
-                except ImportError:
-                    try:
-                        from pypdf import PdfMerger
-                    except ImportError:
-                        PdfMerger = None
-
-                if PdfMerger is None:
-                    st.error("PyPDF2 / pypdf not installed. Run: pip install PyPDF2")
-                else:
-                    merger = PdfMerger()
-                    _HDRS = {"User-Agent": "Mozilla/5.0"}
-                    failed = []
-                    merge_prog = st.progress(0)
-                    merge_status = st.empty()
-                    for idx, a in enumerate(all_pdfs):
-                        purl = a.get("pdf_url","")
-                        title_short = a.get("title","")[:50]
-                        merge_status.markdown(f'<div style="font-size:12px;color:#00ffbf;">⬇ Downloading [{idx+1}/{len(all_pdfs)}]: {title_short}...</div>', unsafe_allow_html=True)
-                        try:
-                            r2 = _req2.get(purl, headers=_HDRS, verify=False, timeout=30)
-                            if r2.status_code == 200 and b"%PDF" in r2.content[:10]:
-                                merger.append(io.BytesIO(r2.content))
-                            else:
-                                failed.append(title_short)
-                        except Exception as ex:
-                            failed.append(title_short)
-                        merge_prog.progress(int((idx+1)/len(all_pdfs)*100))
-
-                    merged_buf = io.BytesIO()
-                    merger.write(merged_buf)
-                    merger.close()
-                    merged_buf.seek(0)
-                    merged_bytes = merged_buf.read()
-                    merge_prog.empty()
-                    merge_status.empty()
-
-                    ok_count = len(all_pdfs) - len(failed)
-                    st.markdown(f'<div style="padding:12px 18px;background:rgba(0,255,191,0.07);border:1px solid rgba(0,255,191,0.25);border-left:4px solid #00ffbf;font-size:13px;color:#ffffff;margin-bottom:8px;">✅ <b style="color:#00ffbf;">{ok_count} PDFs merged</b> successfully{f" · {len(failed)} failed" if failed else ""}. Click below to download.</div>', unsafe_allow_html=True)
-                    st.download_button(
-                        label=f"⬇  Download Combined PDF ({ok_count} articles, {len(merged_bytes)//1024} KB)",
-                        data=merged_bytes,
-                        file_name=f"siemens_press_all_{datetime.now().strftime('%Y%m%d')}.pdf",
-                        mime="application/pdf",
-                        key="download_merged_pdf"
-                    )
 
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown(f'<div class="card-header"><span class="card-title">Scraped Articles</span><span class="badge-green">{len(a2)} Results</span></div>', unsafe_allow_html=True)
@@ -1238,78 +1148,9 @@ tr:hover td {{ background:rgba(0,255,191,0.04); }}
             components.html(table_html, height=min(90 + len(filtered) * 62, 700), scrolling=True)
 
             st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
-
-            # ── Bottom action bar ─────────────────────────────────
-            filtered_pdfs = [a for a in filtered if a.get("pdf_url")]
-            st.markdown(f"""
-            <div style="padding:16px 20px;background:rgba(0,255,191,0.05);border:1px solid rgba(0,255,191,0.18);
-                        border-left:4px solid #00ffbf;margin-bottom:12px;font-size:13px;color:rgba(255,255,255,0.7);">
-                <b style="color:#00ffbf;">{len(filtered_pdfs)} of {len(filtered)} filtered articles have PDFs</b>
-                &nbsp;·&nbsp; Date range: <b style="color:#ffffff;">{f_mn3} → {f_mx3}</b>
-            </div>
-            """, unsafe_allow_html=True)
-
-            col_ex1, col_ex2 = st.columns([1,1], gap="medium")
-            with col_ex1:
-                st.download_button("⬇  Export Filtered Articles (CSV)",
-                    data=pd.DataFrame(filtered).to_csv(index=False).encode(),
-                    file_name=f"filtered_{f_s}_{f_e}.csv", mime="text/csv",
-                    key="export_filtered_csv")
-            with col_ex2:
-                merge_btn3 = st.button(
-                    f"📎  Merge {len(filtered_pdfs)} PDFs into One File ({f_mn3} → {f_mx3})",
-                    key="merge_filtered_pdfs",
-                    disabled=(len(filtered_pdfs) == 0)
-                )
-
-            if merge_btn3 and filtered_pdfs:
-                import requests as _req3
-                try:
-                    from PyPDF2 import PdfMerger as _PM3
-                except ImportError:
-                    try:
-                        from pypdf import PdfMerger as _PM3
-                    except ImportError:
-                        _PM3 = None
-
-                if _PM3 is None:
-                    st.error("PyPDF2 not installed. Run: pip install PyPDF2")
-                else:
-                    merger3   = _PM3()
-                    _HDRS3    = {"User-Agent": "Mozilla/5.0"}
-                    failed3   = []
-                    p3        = st.progress(0)
-                    status3   = st.empty()
-                    for idx, a in enumerate(filtered_pdfs):
-                        purl = a.get("pdf_url","")
-                        t    = a.get("title","")[:50]
-                        status3.markdown(f'<div style="font-size:12px;color:#00ffbf;">⬇ [{idx+1}/{len(filtered_pdfs)}] {t}...</div>', unsafe_allow_html=True)
-                        try:
-                            r3 = _req3.get(purl, headers=_HDRS3, verify=False, timeout=30)
-                            if r3.status_code == 200 and b"%PDF" in r3.content[:10]:
-                                merger3.append(io.BytesIO(r3.content))
-                            else:
-                                failed3.append(t)
-                        except Exception:
-                            failed3.append(t)
-                        p3.progress(int((idx+1)/len(filtered_pdfs)*100))
-
-                    buf3 = io.BytesIO()
-                    merger3.write(buf3)
-                    merger3.close()
-                    buf3.seek(0)
-                    merged3 = buf3.read()
-                    p3.empty(); status3.empty()
-
-                    ok3 = len(filtered_pdfs) - len(failed3)
-                    st.markdown(f'<div style="padding:12px 18px;background:rgba(0,255,191,0.07);border:1px solid rgba(0,255,191,0.25);border-left:4px solid #00ffbf;font-size:13px;color:#ffffff;margin-bottom:8px;">✅ <b style="color:#00ffbf;">{ok3} PDFs merged</b>{f" · {len(failed3)} failed" if failed3 else ""}. Click below to download.</div>', unsafe_allow_html=True)
-                    st.download_button(
-                        label=f"⬇  Download Combined PDF — {f_s} to {f_e} ({ok3} articles, {len(merged3)//1024} KB)",
-                        data=merged3,
-                        file_name=f"siemens_{f_s}_{f_e}_merged.pdf",
-                        mime="application/pdf",
-                        key="dl_merged_filtered"
-                    )
+            st.download_button("⬇  Export Filtered Articles (CSV)",
+                data=pd.DataFrame(filtered).to_csv(index=False).encode(),
+                file_name=f"filtered_{f_s}_{f_e}.csv", mime="text/csv")
         else:
             st.markdown('<div style="padding:60px;text-align:center;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);"><div style="font-size:14px;color:rgba(255,255,255,0.28);">No articles match the current filters.<br>Try adjusting the date range, category or search term.</div></div>', unsafe_allow_html=True)
 
