@@ -14,7 +14,7 @@ HEADERS = {
 }
 
 # ✅ Paste your ScraperAPI key here
-SCRAPERAPI_KEY = st.secrets.get("SCRAPERAPI_KEY", "13f8d4ab092ded8492675818e44ba486")
+SCRAPERAPI_KEY = st.secrets.get("SCRAPERAPI_KEY", "bd199813f5038c1d45e2866d4e3df097")
 
 def get_proxies():
     return {
