@@ -1,7 +1,8 @@
 """
 SiDocs AI – Siemens Press Intelligence
 Exact Siemens.com design: #000028 bg, white text, #00ffbf teal CTA
-Full professional layout — all bugs fixed, dark inputs, proper alignment
++ PDF Merge functionality (Live Scraper + Article Explorer)
++ Fixed calendar popup colors comprehensively
 """
 
 import streamlit as st
@@ -102,6 +103,7 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 /* ── BADGES ── */
 .bg-teal { background: rgba(0,255,191,0.1); color: #00ffbf; border: 1px solid rgba(0,255,191,0.25); font-size: 10px; font-weight: 700; padding: 3px 11px; letter-spacing: 1.2px; text-transform: uppercase; }
 .bg-grey { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.42); border: 1px solid rgba(255,255,255,0.1); font-size: 10px; font-weight: 700; padding: 3px 11px; letter-spacing: 1.2px; text-transform: uppercase; }
+.bg-purple { background: rgba(168,85,247,0.14); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.3); font-size: 10px; font-weight: 700; padding: 3px 11px; letter-spacing: 1.2px; text-transform: uppercase; }
 
 /* ── KPI GRID ── */
 .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin: 26px 0; }
@@ -163,6 +165,17 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 .empty-t { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 10px; }
 .empty-s { font-size: 14px; color: rgba(255,255,255,0.28); line-height: 1.7; max-width: 300px; }
 
+/* ── PDF MERGE BANNER ── */
+.merge-box {
+    background: rgba(168,85,247,0.06);
+    border: 1px solid rgba(168,85,247,0.2);
+    border-left: 4px solid #a855f7;
+    padding: 20px 24px; margin-bottom: 18px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+.merge-txt { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+.merge-txt strong { color: #d8b4fe; display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+
 /* ════════════════════════════════════
    STREAMLIT WIDGETS — ALL DARK
 ════════════════════════════════════ */
@@ -176,6 +189,13 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
     letter-spacing: 0.3px !important;
 }
 .stButton > button:hover { background: #00e0aa !important; }
+
+/* Secondary / merge buttons (use type="secondary") */
+.stButton > button[kind="secondary"] {
+    background: #a855f7 !important; color: #ffffff !important;
+}
+.stButton > button[kind="secondary"]:hover { background: #9333ea !important; }
+
 .stDownloadButton > button {
     background: transparent !important; color: #00ffbf !important;
     border: 1.5px solid rgba(0,255,191,0.4) !important;
@@ -213,7 +233,6 @@ div[data-testid="stWidgetLabel"] label,
     color: #ffffff !important;
 }
 .stNumberInput button svg { fill: #ffffff !important; }
-.stNumberInput button p { color: #ffffff !important; }
 
 /* Select — dark */
 div[data-baseweb="select"] > div {
@@ -231,8 +250,11 @@ div[data-baseweb="select"] svg { fill: rgba(255,255,255,0.4) !important; }
 div[data-baseweb="menu"] { background: #00052e !important; border: 1px solid rgba(0,255,191,0.15) !important; }
 div[data-baseweb="option"] { background: transparent !important; color: rgba(255,255,255,0.8) !important; font-size: 14px !important; padding: 11px 16px !important; }
 div[data-baseweb="option"]:hover { background: rgba(0,255,191,0.08) !important; color: #ffffff !important; }
+ul[role="listbox"] { background: #00052e !important; }
+ul[role="listbox"] li { background: #00052e !important; color: #ffffff !important; }
+ul[role="listbox"] li:hover { background: rgba(0,255,191,0.1) !important; }
 
-/* Date input — dark */
+/* ── DATE INPUT — comprehensive dark fix ── */
 .stDateInput [data-baseweb="input"] {
     background: rgba(255,255,255,0.07) !important;
     border: 1.5px solid rgba(255,255,255,0.18) !important;
@@ -245,12 +267,72 @@ div[data-baseweb="option"]:hover { background: rgba(0,255,191,0.08) !important; 
     font-size: 14px !important; font-weight: 600 !important;
     caret-color: #00ffbf !important;
 }
-/* Dark calendar popup */
-[data-baseweb="popover"] > div { background: #00052e !important; border: 1px solid rgba(0,255,191,0.18) !important; }
-[data-baseweb="calendar"] { background: #00052e !important; }
-[data-baseweb="calendar"] * { color: #ffffff !important; }
-[data-baseweb="calendar"] button { background: transparent !important; border: none !important; color: #ffffff !important; }
-[data-baseweb="calendar"] [aria-selected="true"] { background: #00ffbf !important; color: #000028 !important; }
+
+/* ── CALENDAR POPUP — force dark on ALL nested layers ── */
+div[data-baseweb="popover"],
+div[data-baseweb="popover"] > div,
+div[data-baseweb="popover"] div[role="presentation"] {
+    background: #00052e !important;
+}
+[data-baseweb="calendar"],
+[data-baseweb="calendar"] > div,
+[data-baseweb="calendar"] div {
+    background-color: #00052e !important;
+}
+[data-baseweb="calendar"] {
+    border: 1px solid rgba(0,255,191,0.25) !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6) !important;
+}
+/* Calendar header (month/year + arrows) */
+[data-baseweb="calendar-header"],
+[data-baseweb="calendar"] [class*="Header"] {
+    background-color: #00052e !important;
+    color: #ffffff !important;
+}
+/* All text inside calendar */
+[data-baseweb="calendar"] *,
+[data-baseweb="calendar"] div[role="gridcell"] *,
+[data-baseweb="calendar"] button * {
+    color: #ffffff !important;
+}
+/* Day cells */
+[data-baseweb="calendar"] [role="gridcell"] {
+    background-color: transparent !important;
+}
+[data-baseweb="calendar"] [role="gridcell"] div {
+    background-color: transparent !important;
+    color: #ffffff !important;
+}
+/* Today / selected day backgrounds */
+[data-baseweb="calendar"] [aria-selected="true"] div,
+[data-baseweb="calendar"] [aria-selected="true"] {
+    background-color: #00ffbf !important;
+    color: #000028 !important;
+    border-radius: 0 !important;
+}
+[data-baseweb="calendar"] [aria-roledescription="button"]:hover div {
+    background-color: rgba(0,255,191,0.18) !important;
+}
+/* Month/Year dropdown selects inside calendar */
+[data-baseweb="calendar"] [data-baseweb="select"] > div {
+    background: rgba(255,255,255,0.08) !important;
+    border-color: rgba(255,255,255,0.2) !important;
+}
+/* Prev/Next month arrow buttons */
+[data-baseweb="calendar"] button[aria-label*="month"],
+[data-baseweb="calendar"] button[aria-label*="Month"] {
+    background: transparent !important;
+    color: #ffffff !important;
+}
+[data-baseweb="calendar"] button[aria-label*="month"] svg,
+[data-baseweb="calendar"] button[aria-label*="Month"] svg {
+    fill: #ffffff !important;
+}
+/* Weekday header row (Su Mo Tu...) */
+[data-baseweb="calendar"] [class*="WeekdayHeader"] {
+    color: rgba(255,255,255,0.45) !important;
+    background-color: #00052e !important;
+}
 
 /* Text input — dark */
 .stTextInput [data-baseweb="input"] {
@@ -283,15 +365,23 @@ div[data-baseweb="option"]:hover { background: rgba(0,255,191,0.08) !important; 
 .stProgress > div > div { background: #00ffbf !important; }
 [data-testid="stProgress"] > div { background: rgba(255,255,255,0.07) !important; border-radius: 0 !important; }
 
+/* Spinner */
+.stSpinner > div { border-top-color: #00ffbf !important; }
+.stSpinner p { color: rgba(255,255,255,0.6) !important; }
+
 /* Column padding */
 [data-testid="column"] { padding: 0 8px !important; }
 [data-testid="column"]:first-child { padding-left: 0 !important; }
 [data-testid="column"]:last-child  { padding-right: 0 !important; }
+
+/* Alerts (success/error/warning/info) */
+.stAlert { border-radius: 0 !important; background: rgba(255,255,255,0.05) !important; }
+.stAlert p { color: #ffffff !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Session & helpers ────────────────────────────────────────
-for k, v in [("scraped_articles", []), ("scraper_log", [])]:
+for k, v in [("scraped_articles", []), ("scraper_log", []), ("merged_pdf_bytes", None), ("merged_pdf_name", "")]:
     if k not in st.session_state:
         st.session_state[k] = v
 
@@ -317,6 +407,52 @@ def pdf_btn(url):
     if url:
         return f'<a href="{url}" target="_blank" style="display:inline-block;padding:4px 10px;background:rgba(0,255,191,0.12);color:#00ffbf;border:1px solid rgba(0,255,191,0.3);font-size:10px;font-weight:700;text-decoration:none;letter-spacing:0.5px;white-space:nowrap;">⬇ PDF</a>'
     return '<span style="font-size:11px;color:rgba(255,255,255,0.18);">—</span>'
+
+
+# ── PDF Merge helper ────────────────────────────────────────
+def merge_article_pdfs(article_list, progress_callback=None):
+    """
+    Downloads each article's pdf_url and merges them into a single PDF.
+    Returns (merged_bytes, success_count, fail_count, fail_titles).
+    """
+    import requests as _req
+    from pypdf import PdfReader, PdfWriter
+    import warnings as _w; _w.filterwarnings("ignore")
+
+    writer = PdfWriter()
+    success, fail = 0, 0
+    fail_titles = []
+
+    pdf_articles = [a for a in article_list if a.get("pdf_url")]
+    total = len(pdf_articles)
+
+    for i, a in enumerate(pdf_articles):
+        try:
+            r = _req.get(a["pdf_url"], headers={"User-Agent": "Mozilla/5.0"},
+                         verify=False, timeout=30)
+            if r.status_code == 200 and r.content[:4] == b"%PDF":
+                reader = PdfReader(io.BytesIO(r.content))
+                for page in reader.pages:
+                    writer.add_page(page)
+                success += 1
+            else:
+                fail += 1
+                fail_titles.append(a.get("title", "Unknown")[:50])
+        except Exception:
+            fail += 1
+            fail_titles.append(a.get("title", "Unknown")[:50])
+
+        if progress_callback:
+            progress_callback(i + 1, total)
+
+    if success == 0:
+        return None, success, fail, fail_titles
+
+    out = io.BytesIO()
+    writer.write(out)
+    out.seek(0)
+    return out.getvalue(), success, fail, fail_titles
+
 
 arts  = st.session_state.scraped_articles
 vd    = sorted([d for d in [parse_d(a.get("date", "")) for a in arts] if d])
@@ -379,7 +515,6 @@ with tab1:
         st.markdown('<div class="card-hd"><span class="card-title">⚙ Scraper Configuration</span><span class="bg-teal">ScraperAPI</span></div>', unsafe_allow_html=True)
         st.markdown('<div class="card-body">', unsafe_allow_html=True)
 
-        # Dropdown instead of broken number input for article count
         article_options = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
         articles_to_scrape = st.selectbox(
             "Articles to Scrape",
@@ -419,7 +554,6 @@ with tab1:
                 file_name=f"siemens_press_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv",
             )
-            # PDF links export if any
             all_pdfs = [a for a in st.session_state.scraped_articles if a.get("pdf_url")]
             if all_pdfs:
                 st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
@@ -461,6 +595,7 @@ with tab1:
     if run_btn:
         st.session_state.scraper_log = []
         st.session_state.scraped_articles = []
+        st.session_state.merged_pdf_bytes = None
 
         def log(m, k="ok"):
             st.session_state.scraper_log.append((datetime.now().strftime("%H:%M:%S"), k, m))
@@ -518,7 +653,7 @@ with tab1:
                     for i, a in enumerate(raw):
                         pdf_url = _get_pdf_link(a["url"])
                         a["pdf_url"] = pdf_url or ""
-                        status = f"PDF found" if pdf_url else "No PDF"
+                        status = "PDF found" if pdf_url else "No PDF"
                         kind   = "ok" if pdf_url else "dim"
                         log(f"  [{i+1}/{len(raw)}] {status}: {a['title'][:45]}...", kind)
                         prog_ph.progress(60 + int(30 * (i + 1) / len(raw)))
@@ -574,14 +709,60 @@ with tab1:
             </div>
             """, unsafe_allow_html=True)
 
+        # ── PDF Merge section ──────────────────────────────
+        all_pdfs = [a for a in a2 if a.get("pdf_url")]
+        if all_pdfs:
+            st.markdown('<div class="sec">Merge PDFs</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="merge-box">
+                <div class="merge-txt">
+                    <strong>📎 {len(all_pdfs)} Article PDFs Available</strong>
+                    Combine all scraped article PDFs into a single document for offline reading or sharing.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_m1, col_m2 = st.columns([1, 2], gap="medium")
+            with col_m1:
+                merge_btn = st.button(f"🔗  Merge All {len(all_pdfs)} PDFs into One", key="merge_all_btn", type="secondary")
+
+            if merge_btn:
+                merge_status = st.empty()
+                merge_prog   = st.progress(0)
+
+                def _cb(done, total):
+                    merge_prog.progress(done / total)
+                    merge_status.markdown(
+                        f'<div style="font-size:12px;color:rgba(255,255,255,0.5);">Merging {done}/{total} PDFs...</div>',
+                        unsafe_allow_html=True
+                    )
+
+                merged_bytes, ok_count, fail_count, fail_titles = merge_article_pdfs(a2, progress_callback=_cb)
+                merge_prog.empty()
+                merge_status.empty()
+
+                if merged_bytes:
+                    st.session_state.merged_pdf_bytes = merged_bytes
+                    st.session_state.merged_pdf_name = f"siemens_articles_merged_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+                    st.success(f"✅ Merged {ok_count} PDFs successfully" + (f" — {fail_count} failed to download" if fail_count else ""))
+                else:
+                    st.error("❌ Could not merge any PDFs — all downloads failed.")
+                st.rerun()
+
+            if st.session_state.merged_pdf_bytes:
+                st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+                st.download_button(
+                    f"⬇  Download Merged PDF ({round(len(st.session_state.merged_pdf_bytes)/1024)} KB)",
+                    data=st.session_state.merged_pdf_bytes,
+                    file_name=st.session_state.merged_pdf_name,
+                    mime="application/pdf",
+                )
+
         st.markdown('<div class="sec">Article List</div>', unsafe_allow_html=True)
 
-        # PDF summary banner
-        all_pdfs = [a for a in a2 if a.get("pdf_url")]
         if all_pdfs:
             st.markdown(f'<div style="padding:14px 20px;background:rgba(0,255,191,0.06);border:1px solid rgba(0,255,191,0.2);border-left:4px solid #00ffbf;font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:14px;"><b style="color:#00ffbf;">{len(all_pdfs)} PDFs found</b> — Download links available per article in the table below.</div>', unsafe_allow_html=True)
 
-        # Article table via components.html so it's fully dark
         rows = ""
         for i, a in enumerate(a2[:80], 1):
             cat = a.get("category", "Siemens AG")
@@ -796,6 +977,57 @@ with tab3:
         with c1: st.markdown(f'<div class="kpi"><div class="kpi-val">{len(filtered)}</div><div class="kpi-lbl">Matching Articles</div></div>', unsafe_allow_html=True)
         with c2: st.markdown(f'<div class="kpi w"><div class="kpi-val dt">{f_mn}</div><div class="kpi-lbl">Earliest in Filter</div></div>', unsafe_allow_html=True)
         with c3: st.markdown(f'<div class="kpi g"><div class="kpi-val dt">{f_mx}</div><div class="kpi-lbl">Latest in Filter</div></div>', unsafe_allow_html=True)
+
+        # ── PDF Merge by date range ──────────────────────
+        filtered_pdfs = [a for a in filtered if a.get("pdf_url")]
+        if filtered_pdfs:
+            st.markdown('<div class="sec">Merge Filtered PDFs</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="merge-box">
+                <div class="merge-txt">
+                    <strong>📎 {len(filtered_pdfs)} PDFs in selected range</strong>
+                    {f_mn} → {f_mx}{' · ' + sel_c if sel_c not in ['All Categories','All'] else ''}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            merge_filt_btn = st.button(
+                f"🔗  Merge {len(filtered_pdfs)} Filtered PDFs into One",
+                key="merge_filtered_btn", type="secondary"
+            )
+
+            if merge_filt_btn:
+                mf_status = st.empty()
+                mf_prog   = st.progress(0)
+
+                def _cb2(done, total):
+                    mf_prog.progress(done / total)
+                    mf_status.markdown(
+                        f'<div style="font-size:12px;color:rgba(255,255,255,0.5);">Merging {done}/{total} PDFs...</div>',
+                        unsafe_allow_html=True
+                    )
+
+                merged_bytes2, ok2, fail2, fail_titles2 = merge_article_pdfs(filtered, progress_callback=_cb2)
+                mf_prog.empty()
+                mf_status.empty()
+
+                if merged_bytes2:
+                    st.session_state.merged_pdf_bytes = merged_bytes2
+                    st.session_state.merged_pdf_name = f"siemens_filtered_{f_s}_{f_e}.pdf"
+                    st.success(f"✅ Merged {ok2} PDFs successfully" + (f" — {fail2} failed" if fail2 else ""))
+                else:
+                    st.error("❌ Could not merge any PDFs — all downloads failed.")
+                st.rerun()
+
+            if st.session_state.merged_pdf_bytes:
+                st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+                st.download_button(
+                    f"⬇  Download Merged PDF ({round(len(st.session_state.merged_pdf_bytes)/1024)} KB)",
+                    data=st.session_state.merged_pdf_bytes,
+                    file_name=st.session_state.merged_pdf_name,
+                    mime="application/pdf",
+                    key="dl_merged_explorer"
+                )
 
         st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
 
