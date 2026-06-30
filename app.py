@@ -550,28 +550,6 @@ with tab1:
 
         st.markdown("<div style='height:22px'></div>", unsafe_allow_html=True)
         run_btn = st.button("▶  Run Scraper", type="primary")
-        st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
-
-        if st.session_state.scraped_articles:
-            df_e = pd.DataFrame(st.session_state.scraped_articles)
-            st.download_button(
-                "⬇  Export All Articles (CSV)",
-                data=df_e.to_csv(index=False).encode(),
-                file_name=f"siemens_press_{datetime.now().strftime('%Y%m%d')}.csv",
-                mime="text/csv",
-            )
-            all_pdfs = [a for a in st.session_state.scraped_articles if a.get("pdf_url")]
-            if all_pdfs:
-                st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
-                pdf_csv = "Title,PDF URL\n" + "\n".join(
-                    f'"{a.get("title","")[:60]}",{a.get("pdf_url","")}' for a in all_pdfs
-                )
-                st.download_button(
-                    f"⬇  Export PDF Links ({len(all_pdfs)} PDFs)",
-                    data=pdf_csv.encode(),
-                    file_name=f"siemens_pdf_links_{datetime.now().strftime('%Y%m%d')}.csv",
-                    mime="text/csv",
-                )
 
         st.markdown('</div></div>', unsafe_allow_html=True)
 
@@ -730,7 +708,7 @@ with tab1:
 
             col_m1, col_m2 = st.columns([1, 2], gap="medium")
             with col_m1:
-                merge_btn = st.button(f"🔗  Merge All {len(all_pdfs)} PDFs into One", key="merge_all_btn", type="secondary")
+                merge_btn = st.button(f"🔗  Merge All {len(all_pdfs)} PDFs into One", key="merge_all_btn", type="primary")
 
             if merge_btn:
                 merge_status = st.empty()
@@ -811,6 +789,15 @@ with tab1:
 
         if len(a2) > 80:
             st.markdown(f'<div style="font-size:12px;color:rgba(255,255,255,0.22);margin-top:8px;">Showing 80 of {len(a2)} — see Article Explorer tab for full view.</div>', unsafe_allow_html=True)
+
+        st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+        df_e = pd.DataFrame(a2)
+        st.download_button(
+            "⬇  Export All Articles (CSV)",
+            data=df_e.to_csv(index=False).encode(),
+            file_name=f"siemens_press_{datetime.now().strftime('%Y%m%d')}.csv",
+            mime="text/csv",
+        )
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -999,7 +986,7 @@ with tab3:
 
             merge_filt_btn = st.button(
                 f"🔗  Merge {len(filtered_pdfs)} Filtered PDFs into One",
-                key="merge_filtered_btn", type="secondary"
+                key="merge_filtered_btn", type="primary"
             )
 
             if merge_filt_btn:
