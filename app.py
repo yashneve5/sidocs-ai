@@ -63,9 +63,8 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 .hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #00ccaa; margin-bottom: 18px; }
 .hero-title { font-size: 48px; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 20px; max-width: 700px; letter-spacing: -0.5px; }
 .hero-title em { color: #00ffbf; font-style: normal; }
-.hero-sub { font-size: 16px; color: rgba(255,255,255,0.5); line-height: 1.8; max-width: 540px; font-weight: 300; margin-bottom: 40px; }
-.hero-btn { display: inline-block; background: #00ffbf; color: #000028; font-size: 14px; font-weight: 700; padding: 14px 34px; cursor: pointer; letter-spacing: 0.4px; }
-.hero-stats { display: flex; gap: 52px; margin-top: 54px; padding-top: 38px; border-top: 1px solid rgba(255,255,255,0.07); }
+.hero-sub { font-size: 16px; color: rgba(255,255,255,0.5); line-height: 1.8; max-width: 540px; font-weight: 300; margin-bottom: 8px; }
+.hero-stats { display: flex; gap: 52px; margin-top: 46px; padding-top: 38px; border-top: 1px solid rgba(255,255,255,0.07); }
 .hs-val { font-size: 38px; font-weight: 900; color: #00ffbf; line-height: 1; letter-spacing: -1px; }
 .hs-val.sm { font-size: 19px; font-weight: 700; color: #ffffff; padding-top: 9px; line-height: 1.3; letter-spacing: 0; }
 .hs-lbl { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.8px; margin-top: 7px; }
@@ -486,7 +485,6 @@ st.markdown(f"""
     <div class="hero-title">Building the intelligence layer<br>for <em>Siemens Press</em></div>
     <div class="hero-sub">Scrape, analyse and explore Siemens global press releases by date range.
     Upload PDFs for instant analysis — or run the live scraper to surface the latest news across all business units.</div>
-    <a class="hero-btn">Get started ↓</a>
     <div class="hero-stats">
         <div><div class="hs-val">{n_a}</div><div class="hs-lbl">Articles Loaded</div></div>
         <div><div class="hs-val">{n_c}</div><div class="hs-lbl">Categories</div></div>
