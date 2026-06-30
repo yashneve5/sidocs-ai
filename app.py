@@ -509,7 +509,7 @@ with tab1:
     col_cfg, col_log = st.columns([5, 7], gap="large")
 
     with col_cfg:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card" style="margin-left:14px;">', unsafe_allow_html=True)
         st.markdown('<div class="card-hd"><span class="card-title">⚙ Scraper Configuration</span><span class="bg-teal">ScraperAPI</span></div>', unsafe_allow_html=True)
         st.markdown('<div class="card-body">', unsafe_allow_html=True)
 
@@ -541,7 +541,7 @@ with tab1:
         """, unsafe_allow_html=True)
 
         st.markdown("<div style='height:22px'></div>", unsafe_allow_html=True)
-        run_btn = st.button("▶  Run Scraper")
+        run_btn = st.button("▶  Run Scraper", type="primary")
         st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
         if st.session_state.scraped_articles:
