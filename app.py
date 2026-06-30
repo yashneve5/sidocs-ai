@@ -26,7 +26,13 @@ st.markdown("""
 
 html, body, .stApp, [class*="css"] {
     font-family: 'Inter', 'Segoe UI', sans-serif !important;
-    background-color: #000028 !important;
+    background:
+        radial-gradient(ellipse 1100px 650px at -5% -10%, rgba(139,58,237,0.45) 0%, transparent 58%),
+        radial-gradient(ellipse 1000px 600px at 50% 35%, rgba(76,29,149,0.30) 0%, transparent 60%),
+        radial-gradient(ellipse 1100px 650px at 105% 110%, rgba(0,255,191,0.30) 0%, transparent 58%),
+        radial-gradient(ellipse 900px 550px at 75% 80%, rgba(0,180,200,0.20) 0%, transparent 60%),
+        linear-gradient(135deg, #160a3a 0%, #0a0838 25%, #000028 55%, #00132e 80%, #001a2e 100%) !important;
+    background-attachment: fixed !important;
     color: #ffffff !important;
     -webkit-font-smoothing: antialiased;
 }
@@ -37,7 +43,9 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 
 /* ── NAV ── */
 .nav {
-    background: #000028;
+    background: rgba(0,0,40,0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(255,255,255,0.1);
     padding: 0 56px; height: 68px;
     display: flex; align-items: center; justify-content: space-between;
@@ -54,12 +62,12 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 
 /* ── HERO ── */
 .hero {
-    background: #000028;
+    background: transparent;
     padding: 72px 56px 62px 56px;
     position: relative; overflow: hidden;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-.hero::before { content:''; position:absolute; top:-100px; right:-80px; width:550px; height:550px; background:radial-gradient(ellipse, rgba(0,155,130,0.12) 0%, transparent 65%); pointer-events:none; }
+.hero::before { content:''; position:absolute; top:-100px; right:-80px; width:550px; height:550px; background:radial-gradient(ellipse, rgba(0,255,191,0.12) 0%, transparent 65%); pointer-events:none; }
+.hero::after { content:''; position:absolute; bottom:-140px; left:10%; width:600px; height:600px; background:radial-gradient(ellipse, rgba(124,58,237,0.14) 0%, transparent 65%); pointer-events:none; }
 .hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #00ccaa; margin-bottom: 18px; }
 .hero-title { font-size: 48px; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 20px; max-width: 700px; letter-spacing: -0.5px; }
 .hero-title em { color: #00ffbf; font-style: normal; }
@@ -70,7 +78,7 @@ section[data-testid="stAppViewContainer"] > div { padding: 0 !important; }
 .hs-lbl { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.8px; margin-top: 7px; }
 
 /* ── PAGE BODY ── */
-.page { background: #000028; padding: 40px 56px 80px 56px; }
+.page { background: transparent; padding: 40px 56px 80px 56px; }
 
 /* ── TABS ── */
 .stTabs [data-baseweb="tab-list"] {
